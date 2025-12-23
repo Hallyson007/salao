@@ -1,1487 +1,298 @@
-
-
 <!DOCTYPE html>
 <html lang="pt-BR">
-    <head>
-        <meta charset="UTF-8" />
-        <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-        <title>🏢 Sistema de Territórios - Monte Castelo / Centro</title>
-        <meta
-            name="description"
-            content="De casa em casa e predial com cartas, folhetos e estudos." />
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>🏢 Sistema de Territórios - Monte Castelo / Centro</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  
+  <link rel="stylesheet" href="styles.css">
+</head>
 
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-        <link
-            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap"
-            rel="stylesheet" />
+<body>
+  <a class="skip-link" href="#mainContent">Ir para conteúdo</a>
 
-        <!-- jsPDF e XLSX -->
-        <script
-            src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-        <script
-            src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
-        <style>
-      :root{
-        --bg-primary:#f3f4f6; --bg-secondary:#e5e7eb; --card:#ffffff;
-        --text:#0f172a; --text-secondary:#4b5563; --muted:#6b7280;
-        --accent:#1d4ed8; --accent-hover:#1e40af; --danger:#dc2626;
-        --success:#16a34a; --warning:#ea580c; --border:#d1d5db;
-        --shadow-sm:0 1px 3px rgba(15,23,42,0.12);
-        --shadow:0 4px 12px rgba(15,23,42,0.15);
-        --shadow-lg:0 10px 25px rgba(15,23,42,0.25);
-        --radius:clamp(10px,1.2vw,16px);
-        --radius-sm:clamp(6px,0.8vw,10px);
-        --transition:all .2s cubic-bezier(.4,0,.2,1);
-        --watermark-url-light:url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRrch7g9J6o2EDTqFr0J9Wnz3ZKPCeGT0y3Q8EZDaS7882kuFsgodH7l6Ij-qInxGcAygs&usqp=CAU');
-        --watermark-url-dark:url('https://i.pinimg.com/1200x/5a/37/d6/5a37d68a00d56b9ba6de08385b6e4ebb.jpg');
-        --watermark:var(--watermark-url-light);
-        --watermark-opacity:.05;
-        --min-touch:44px;
-        font-family:'Inter', system-ui, -apple-system, sans-serif;
-      }
-
-      [data-theme='dark']{
-        --bg-primary:#020617; --bg-secondary:#02081f; --card:#020617;
-        --text:#e5e7eb; --text-secondary:#9ca3af; --muted:#9ca3af;
-        --accent:#60a5fa; --accent-hover:#3b82f6; --border:#1f2937;
-        --watermark:var(--watermark-url-dark); --watermark-opacity:.03;
-      }
-
-      *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-      html{font-size:clamp(13px,.8vw + .5rem,18px);scroll-behavior:smooth;height:100%}
-      body{
-        font-family:inherit;background:var(--bg-primary);color:var(--text);
-        line-height:1.5;min-height:100vh;padding:env(safe-area-inset);transition:var(--transition);
-        position:relative;overflow-x:hidden;
-      }
-      body::before{
-        content:'';position:fixed;inset:0;background-image:var(--watermark);
-        background-size:cover;background-position:center;opacity:var(--watermark-opacity);
-        filter:grayscale(.9) contrast(.9) saturate(.6) blur(.6px);mix-blend-mode:soft-light;
-        pointer-events:none;z-index:0;
-      }
-
-      .app{position:relative;z-index:1;max-width:100%;margin:0 auto;padding:clamp(12px,1.5vw,24px);animation:fadeIn .4s ease-out}
-      @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-
-      .skip-link{position:fixed;left:12px;top:12px;background:var(--card);padding:10px 16px;border-radius:var(--radius-sm);box-shadow:var(--shadow);z-index:999;transform:translateY(-150%);transition:transform .2s;color:var(--text);text-decoration:none;font-weight:600}
-      .skip-link:focus{transform:translateY(0);outline:3px solid var(--accent)}
-
-      header{
-        background:linear-gradient(135deg,#1e3a8a 0%, #1e40af 100%);color:#fff;padding:clamp(16px,2vw,28px);border-radius:var(--radius);margin-bottom:clamp(16px,2vw,24px);box-shadow:var(--shadow-lg);position:relative;overflow:hidden;
-      }
-      [data-theme='dark'] header{background:linear-gradient(135deg,#1e40af 0%,#2563eb 100%)}
-      header::before{
-        content:'';position:absolute;top:-50%;right:-50%;width:200%;height:200%;background:radial-gradient(circle,rgba(255,255,255,.12) 0%,transparent 70%);animation:pulse 8s ease-in-out infinite;pointer-events:none;
-      }
-      @keyframes pulse{0%,100%{transform:scale(1);opacity:.5}50%{transform:scale(1.08);opacity:.3}}
-
-      .header-content{display:flex;gap:clamp(12px,1.5vw,20px);align-items:center;justify-content:space-between;flex-wrap:wrap;position:relative;z-index:1}
-      .header-left{display:flex;gap:clamp(10px,1.2vw,16px);align-items:center;min-width:0;flex:1}
-      .sidebar-toggle{display:none;min-width:var(--min-touch);height:var(--min-touch);border-radius:var(--radius-sm);background:rgba(255,255,255,.15);color:#fff;border:2px solid rgba(255,255,255,.2);font-size:1.2rem;cursor:pointer;transition:var(--transition)}
-      .sidebar-toggle:hover{background:rgba(255,255,255,.25)}
-      .brand{font-weight:800;font-size:clamp(1.2rem,2vw,1.8rem);line-height:1.2;letter-spacing:-0.02em}
-      .subtitle{font-size:clamp(.8rem,1vw,1rem);color:rgba(255,255,255,.97);font-weight:500;margin-top:4px}
-
-      .header-actions{display:flex;gap:clamp(8px,1vw,12px);flex-wrap:wrap;align-items:center}
-      .btn{display:inline-flex;align-items:center;justify-content:center;gap:clamp(6px,0.8vw,10px);padding:clamp(10px,1.2vw,14px) clamp(12px,1.5vw,18px);border-radius:var(--radius-sm);border:none;cursor:pointer;font-weight:600;font-size:clamp(.85rem,0.9vw,1rem);transition:var(--transition);min-height:var(--min-touch);text-decoration:none;font-family:inherit;white-space:nowrap;position:relative}
-      .btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:var(--shadow)}
-      .btn:active{transform:translateY(0)}
-      .btn:disabled{opacity:.5;cursor:not-allowed}
-      .btn-primary{background:linear-gradient(135deg,var(--accent) 0%,var(--accent-hover) 100%);color:#fff;border:2px solid #1d4ed8;box-shadow:0 2px 8px rgba(37,99,235,.25)}
-      [data-theme='dark'] .btn-primary{background:linear-gradient(135deg,#3b82f6 0%,#60a5fa 100%);border-color:#2563eb}
-      .btn-success{background:var(--success);color:#fff;border:2px solid var(--success)}
-      .btn-secondary{background:var(--muted);color:#fff;border:2px solid var(--muted)}
-      .btn-danger{background:var(--danger);color:#fff;border:2px solid var(--danger)}
-      .btn-warning{background:var(--warning);color:#fff;border:2px solid var(--warning)}
-
-      .layout{display:grid;grid-template-columns:clamp(280px,22vw,400px) 1fr;gap:clamp(16px,2vw,28px);align-items:flex-start}
-      .layout.sidebar-collapsed{grid-template-columns:0 1fr}
-
-      .sidebar{background:var(--card);padding:clamp(16px,2vw,24px);border-radius:var(--radius);border:2px solid var(--border);box-shadow:var(--shadow-sm);position:sticky;top:clamp(12px,1.5vw,20px);max-height:calc(100vh - clamp(24px,3vw,40px));overflow-y:auto;transition:var(--transition);-webkit-overflow-scrolling:touch;z-index:100}
-      .sidebar h3{font-size:clamp(.8rem,0.9vw,.95rem);color:var(--text-secondary);margin-bottom:clamp(12px,1.5vw,16px);text-transform:uppercase;font-weight:800;letter-spacing:.08em}
-
-      .search{display:flex;gap:clamp(8px,1vw,12px);margin-bottom:clamp(12px,1.5vw,18px)}
-      .search input{flex:1;padding:clamp(10px,1.2vw,14px);border-radius:var(--radius-sm);border:2px solid var(--border);background:var(--bg-secondary);color:var(--text);transition:var(--transition);font-size:clamp(.85rem,0.9vw,1rem);min-height:var(--min-touch);font-family:inherit}
-      .search input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,130,246,.15)}
-
-      .territory-list{display:grid;gap:clamp(8px,1vw,12px)}
-      .tab{display:flex;align-items:center;gap:clamp(10px,1.2vw,14px);padding:clamp(10px,1.2vw,14px);border-radius:var(--radius-sm);background:transparent;border:2px solid transparent;text-align:left;cursor:pointer;transition:var(--transition);color:var(--text);width:100%;position:relative;min-height:clamp(56px,6vw,70px);font-size:clamp(.85rem,0.9vw,1rem)}
-      .tab:hover{background:var(--bg-secondary);border-color:var(--border);transform:translateX(4px)}
-      .tab.active{background:var(--bg-secondary);border-color:var(--accent);color:var(--accent);box-shadow:var(--shadow-sm);font-weight:700}
-      .tab.fixado::after{content:'📌';position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:clamp(1rem,1.2vw,1.3rem)}
-
-      .tab-badge{width:clamp(44px,5vw,56px);height:clamp(44px,5vw,56px);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:clamp(.95rem,1.1vw,1.15rem);color:#fff;flex-shrink:0;box-shadow:var(--shadow-sm)}
-
-      .content{background:var(--card);padding:clamp(20px,2.5vw,32px);border-radius:var(--radius);border:2px solid var(--border);box-shadow:var(--shadow);min-height:500px;transition:var(--transition)}
-
-      .card{background:var(--bg-secondary);padding:clamp(16px,2vw,24px);border-radius:var(--radius-sm);margin-bottom:clamp(16px,2vw,24px);border:2px solid var(--border);transition:var(--transition)}
-      .form-group{margin-bottom:clamp(14px,1.8vw,18px)}
-      .form-group label{display:block;margin-bottom:clamp(6px,0.8vw,10px);font-weight:600;color:var(--text-secondary);font-size:clamp(.85rem,0.9vw,.95rem)}
-      .form-row{display:flex;gap:clamp(10px,1.2vw,14px);align-items:flex-end;flex-wrap:wrap}
-      .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(clamp(200px,20vw,280px),1fr));gap:clamp(12px,1.5vw,18px)}
-
-      input[type='text'],input[type='number'],input[type='date'],select,textarea{
-        width:100%;padding:clamp(10px,1.2vw,14px);border-radius:var(--radius-sm);border:2px solid var(--border);background:var(--bg-secondary);font-family:inherit;color:var(--text);transition:var(--transition);font-size:clamp(.85rem,0.9vw,1rem);min-height:var(--min-touch)
-      }
-      input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,130,246,.15)}
-      textarea{min-height:clamp(100px,12vw,140px);resize:vertical;line-height:1.6}
-
-      .apartment-selector,.block-selector{display:grid;grid-template-columns:repeat(auto-fill,minmax(clamp(70px,8vw,100px),1fr));gap:clamp(10px,1.2vw,14px)}
-      .apartment-btn,.block-btn{padding:clamp(12px,1.5vw,16px);border-radius:var(--radius-sm);border:2px solid var(--border);background:var(--bg-secondary);cursor:pointer;font-weight:700;transition:var(--transition);color:var(--text);min-height:clamp(52px,6vw,64px);font-size:clamp(.9rem,1vw,1.1rem);font-family:inherit;position:relative}
-      .apartment-btn.has-note{background:var(--success);color:#fff;border-color:var(--success);box-shadow:0 4px 12px rgba(22,163,74,.3)}
-      .apartment-btn:hover,.block-btn:hover{transform:scale(1.05);border-color:var(--accent);box-shadow:var(--shadow)}
-
-      .address-list{display:grid;gap:clamp(12px,1.5vw,16px)}
-      .address-item{background:var(--bg-secondary);padding:clamp(14px,1.8vw,20px);border-radius:var(--radius-sm);border-left:4px solid var(--accent);display:flex;justify-content:space-between;align-items:center;gap:clamp(12px,1.5vw,16px);transition:var(--transition);color:var(--text);flex-wrap:wrap;position:relative}
-      .address-item:hover{transform:translateX(6px);box-shadow:var(--shadow-sm)}
-
-      .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(clamp(140px,16vw,200px),1fr));gap:clamp(12px,1.5vw,18px);margin-bottom:clamp(16px,2vw,24px)}
-      .stat-card{background:linear-gradient(135deg,#1e3a8a 0%,#1e40af 100%);color:#fff;padding:clamp(16px,2vw,24px);border-radius:var(--radius-sm);text-align:center;box-shadow:var(--shadow);min-height:clamp(90px,10vw,120px);display:flex;flex-direction:column;justify-content:center}
-      [data-theme='dark'] .stat-card{background:linear-gradient(135deg,#2563eb 0%,#1d4ed8 100%)}
-      .stat-card h4{font-size:clamp(1.6rem,2.5vw,2.2rem);font-weight:800;margin-bottom:4px}
-      .stat-card p{font-size:clamp(.85rem,0.9vw,1rem);opacity:.95}
-
-      .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);z-index:1000;align-items:center;justify-content:center;padding:clamp(16px,2vw,24px)}
-      .modal.show{display:flex}
-      .modal-content{background:var(--card);border-radius:var(--radius);padding:clamp(20px,2.5vw,28px);max-width:min(90vw,900px);width:100%;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg);animation:slideUp .3s ease-out;border:2px solid var(--border)}
-      @keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
-      .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:clamp(14px,1.8vw,20px);border-bottom:2px solid var(--border);padding-bottom:clamp(10px,1.2vw,14px);gap:12px}
-      .close-modal{background:var(--bg-secondary);border:2px solid var(--border);font-size:clamp(1.3rem,1.5vw,1.6rem);cursor:pointer;color:var(--text);min-width:var(--min-touch);height:var(--min-touch);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;transition:var(--transition);flex-shrink:0}
-      .close-modal:hover{background:var(--danger);color:#fff;border-color:var(--danger)}
-
-      .toast{position:fixed;right:clamp(16px,2vw,24px);bottom:clamp(16px,2vw,24px);background:var(--card);color:var(--text);padding:clamp(14px,1.8vw,18px) clamp(18px,2.2vw,24px);border-radius:var(--radius-sm);box-shadow:var(--shadow-lg);z-index:2000;border:2px solid var(--border);font-weight:600;font-size:clamp(.85rem,0.9vw,1rem);min-width:clamp(220px,25vw,300px);transform:translateY(150%);opacity:0;transition:var(--transition)}
-      .toast.show{transform:translateY(0);opacity:1}
-
-      .badge{display:inline-block;padding:clamp(6px,0.8vw,10px) clamp(10px,1.2vw,14px);border-radius:clamp(16px,2vw,20px);font-size:clamp(.8rem,0.85vw,.9rem);font-weight:700}
-      .badge-warning{background:var(--warning);color:#fff}
-
-      .dias-list{display:flex;flex-wrap:wrap;gap:clamp(8px,1vw,12px);margin-top:clamp(10px,1.2vw,14px)}
-      .dia-badge{background:var(--accent);color:#fff;padding:clamp(8px,1vw,12px) clamp(12px,1.5vw,16px);border-radius:clamp(18px,2vw,24px);font-size:clamp(.8rem,0.85vw,.95rem);display:inline-flex;align-items:center;gap:clamp(6px,0.8vw,10px);font-weight:600}
-      .dia-badge button{background:rgba(255,255,255,.2);border:none;color:#fff;cursor:pointer;font-size:clamp(1rem,1.1vw,1.2rem);padding:clamp(3px,0.5vw,6px) clamp(6px,0.8vw,10px);border-radius:4px;transition:var(--transition);min-width:28px;height:28px;display:flex;align-items:center;justify-content:center}
-
-      .tooltip{position:absolute;background:var(--card);border:2px solid var(--border);border-radius:var(--radius-sm);padding:12px 16px;box-shadow:var(--shadow-lg);z-index:10000;min-width:250px;max-width:350px;pointer-events:none;opacity:0;transition:opacity .2s;color:var(--text);font-size:.9rem;line-height:1.5}
-      .tooltip.show{opacity:1;pointer-events:auto}
-      .tooltip h4{margin-bottom:8px;color:var(--accent);font-size:1rem}
-      .tooltip-divider{height:1px;background:var(--border);margin:8px 0}
-      .tooltip-item{display:flex;justify-content:space-between;margin:4px 0;font-size:.85rem}
-      .tooltip-label{color:var(--text-secondary)}
-      .tooltip-value{font-weight:600;color:var(--text)}
-
-      .portaria-badge{display:inline-flex;align-items:center;gap:4px;padding:4px 8px;border-radius:12px;font-size:.75rem;font-weight:600;margin-left:8px}
-      .portaria-eletronica{background:#dbeafe;color:#1e40af}
-      .portaria-normal{background:#d1fae5;color:#065f46}
-
-      .radio-group{display:flex;flex-direction:column;gap:clamp(8px,1vw,12px)}
-      .radio-group label{display:flex;align-items:center;gap:clamp(8px,1vw,12px);cursor:pointer;padding:clamp(10px,1.2vw,14px);border-radius:var(--radius-sm);transition:var(--transition);border:2px solid transparent;font-size:clamp(.85rem,0.9vw,1rem);min-height:var(--min-touch)}
-      .radio-group label:hover{background:var(--bg-secondary);border-color:var(--border)}
-      .radio-group input[type='radio']{width:20px;height:20px;min-width:20px;cursor:pointer}
-
-      .building-preview{background:var(--bg-secondary);padding:clamp(12px,1.5vw,16px);border-radius:var(--radius-sm);margin-top:clamp(10px,1.2vw,14px);border-left:4px solid var(--warning);font-size:clamp(.85rem,0.9vw,.95rem)}
-
-      #existingNoteDisplay{background:var(--bg-secondary);padding:clamp(14px,1.8vw,18px);border-radius:var(--radius-sm);border-left:4px solid var(--success);margin-bottom:clamp(14px,1.8vw,18px);color:var(--text)}
-      #existingNoteDisplay h4{margin-bottom:clamp(8px,1vw,12px);font-size:clamp(1rem,1.1vw,1.15rem)}
-
-      .status-badge{display:inline-block;padding:clamp(8px,1vw,12px) clamp(12px,1.5vw,16px);border-radius:clamp(16px,2vw,20px);font-weight:700;font-size:clamp(.8rem,0.85vw,.9rem);letter-spacing:.02em}
-      .status-nao-visitado{background:#cbd5e1;color:#0f172a}
-      .status-ausente{background:#fef3c7;color:#78350f}
-      .status-conversado{background:#d1fae5;color:#065f46}
-      .status-carta{background:#dbeafe;color:#1e3a8a}
-      .status-folheto{background:#e9d5ff;color:#581c87}
-      .status-recusou{background:#fee2e2;color:#7f1d1d}
-      .status-estudo{background:#a7f3d0;color:#064e3b}
-
-      ::-webkit-scrollbar{width:clamp(10px,1.2vw,14px);height:clamp(10px,1.2vw,14px)}
-      ::-webkit-scrollbar-track{background:var(--bg-secondary)}
-      ::-webkit-scrollbar-thumb{background:var(--muted);border-radius:6px}
-      ::-webkit-scrollbar-thumb:hover{background:var(--accent)}
-
-      @media (max-width:768px){
-        .sidebar-toggle{display:flex;align-items:center;justify-content:center}
-        .layout{grid-template-columns:1fr;gap:0}
-        .sidebar{position:fixed;left:0;top:0;bottom:0;width:min(85vw,360px);max-height:100vh;z-index:100;transform:translateX(0);border-radius:0;background:var(--card)}
-        .sidebar.collapsed{transform:translateX(-100%)}
-        .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99;backdrop-filter:blur(2px)}
-        .sidebar-overlay.show{display:block}
-      }
-
-      @media (max-width:640px){
-        .header-content{flex-direction:column;align-items:stretch}
-        .header-actions{flex-direction:column;width:100%}
-        .btn{width:100%;justify-content:center}
-      }
-
-      @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
-     /* garantir que o tooltip não capture toques/ponteiros e esteja em topo */
-       #tooltipContainer{ pointer-events:none; touch-action:none; position:fixed !important; transform:translateZ(0); max-width:400px; }
-
-    </style>
-    </head>
-
-    <body>
-        <a class="skip-link" href="#mainContent">Ir para conteúdo</a>
-
-        <div class="app" id="app">
-            <header role="banner">
-                <div class="header-content">
-                    <div class="header-left">
-                        <button
-                            id="sidebarToggle"
-                            class="sidebar-toggle"
-                            aria-label="Alternar menu"
-                            title="Abrir/Fechar menu"
-                            type="button">
-                            ☰
-                        </button>
-
-                        <div>
-                            <div class="brand">🏢 Sistema de Territórios</div>
-                            <div class="subtitle">
-                                Monte Castelo / Centro • De casa em casa e
-                                predial com cartas e
-                                estudos.
-                            </div>
-                        </div>
-                    </div>
-
-                    <div
-                        class="header-actions"
-                        role="toolbar"
-                        aria-label="Ações principais">
-                        <button id="undoBtn" class="btn btn-primary"
-                            title="Desfazer (Ctrl+Z)" type="button">↶
-                            Desfazer</button>
-                        <button id="redoBtn" class="btn btn-primary"
-                            title="Refazer (Ctrl+Y)" type="button">↷
-                            Refazer</button>
-                        <button id="saveBtn" class="btn btn-primary"
-                            title="Salvar (Ctrl+S)"
-                            type="button">💾 Salvar</button>
-                        <button id="loadBtn" class="btn btn-primary"
-                            title="Recarregar"
-                            type="button">🔄 Recarregar</button>
-                        <button id="exportBtn" class="btn btn-primary"
-                            title="Exportar JSON (Ctrl+E)" type="button">📤
-                            Exportar</button>
-                        <button id="copySummaryBtn" class="btn btn-primary"
-                            title="Copiar resumo" type="button">📋
-                            Copiar</button>
-                        <button id="shareBtn" class="btn btn-primary"
-                            title="Compartilhar WhatsApp" type="button">📲
-                            Compartilhar</button>
-                        <button id="importBtn" class="btn btn-primary"
-                            title="Importar JSON"
-                            type="button">📥 Importar</button>
-                        <input id="fileInput" type="file"
-                            accept="application/json"
-                            style="display:none" aria-hidden="true" />
-                        <button id="importDemoBtn" class="btn btn-secondary"
-                            title="Inserir dados do .json de exemplo"
-                            type="button">📦 Inserir
-                            JSON</button>
-                        <button id="themeBtn" class="btn btn-primary"
-                            title="Alternar tema (T)" type="button">🌙
-                            Tema</button>
-                        <button id="newTerritoryBtn" class="btn btn-success"
-                            title="Novo território" type="button">➕
-                            Novo</button>
-                    </div>
-                </div>
-            </header>
-
-            <div class="layout" id="layoutRoot">
-                <aside class="sidebar" id="sidebar"
-                    aria-labelledby="sidebarTitle">
-                    <h3 id="sidebarTitle">📋 Visão Geral</h3>
-
-                    <div class="search" role="search"
-                        aria-label="Buscar territórios">
-                        <input id="territorySearch" type="text"
-                            placeholder="🔎 Buscar território..."
-                            aria-label="Buscar território" />
-                        <button id="clearSearch" class="btn btn-secondary"
-                            title="Limpar busca" type="button">✖</button>
-                    </div>
-
-                    <div
-                        style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding:6px 0;border-bottom:2px solid var(--border)">
-                        <small
-                            style="color:var(--text-secondary);font-weight:700">Total
-                            de
-                            Territórios</small>
-                        <strong id="totalTerritories">0</strong>
-                    </div>
-
-                    <div class="territory-list" id="territoriesList"
-                        role="list"></div>
-                </aside>
-
-                <main id="mainContent" class="content" role="main" tabindex="-1"
-                    aria-live="polite"></main>
-            </div>
+  <div class="app" id="app">
+    <header role="banner">
+      <div class="header-content">
+        <div class="header-left">
+          <button id="sidebarToggle" class="sidebar-toggle" aria-label="Menu" type="button">☰</button>
+          <div>
+            <div class="brand">🏢 Sistema de Territórios</div>
+            <div class="subtitle">Monte Castelo / Centro</div>
+          </div>
         </div>
+        
+        <nav class="header-actions">
+          <button id="undoBtn" class="btn btn-primary" title="Desfazer (Ctrl+Z)">↶ <span class="btn-label">Desfazer</span></button>
+          <button id="redoBtn" class="btn btn-primary" title="Refazer (Ctrl+Y)">↷ <span class="btn-label">Refazer</span></button>
+          <button id="saveBtn" class="btn btn-primary" title="Salvar">💾 <span class="btn-label">Salvar</span></button>
+          <button id="exportBtn" class="btn btn-primary" title="Exportar">📤 <span class="btn-label">Exportar</span></button>
+          <button id="importBtn" class="btn btn-primary" title="Importar">📥 <span class="btn-label">Importar</span></button>
+          <input id="fileInput" type="file" accept="application/json" hidden>
+          <button id="copySummaryBtn" class="btn btn-primary" title="Copiar">📋 <span class="btn-label">Copiar</span></button>
+          <button id="shareBtn" class="btn btn-primary" title="WhatsApp">📲 <span class="btn-label">WhatsApp</span></button>
+          <button id="themeBtn" class="btn btn-primary" title="Tema">🌙 <span class="btn-label">Tema</span></button>
+          <button id="newTerritoryBtn" class="btn btn-success" title="Novo">➕ <span class="btn-label">Novo</span></button>
+        </nav>
+      </div>
+    </header>
 
-        <div class="sidebar-overlay" id="sidebarOverlay" onclick></div>
-        <div id="tooltipContainer" class="tooltip" aria-hidden="true"></div>
-        <aside id="infoPanel" class="info-panel hidden" aria-hidden="true"
-            tabindex="-1"></aside>
-
-        <!-- MODAIS -->
-        <!-- Novo Território -->
-        <div id="newTerritoryModal" class="modal" aria-hidden="true"
-            role="dialog"
-            aria-modal="true" aria-labelledby="newTerritoryModalTitle">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 id="newTerritoryModalTitle">➕ Novo Território</h2>
-                    <button class="close-modal" type="button"
-                        data-close="newTerritoryModal"
-                        aria-label="Fechar">×</button>
-                </div>
-                <div class="form-group">
-                    <label for="newTerritoryNumber">Número do Território</label>
-                    <input id="newTerritoryNumber" type="number"
-                        placeholder="Ex: 25" />
-                </div>
-                <div class="form-group">
-                    <label for="newTerritoryName">Nome do Território</label>
-                    <input id="newTerritoryName" type="text"
-                        placeholder="Ex: Rua Principal" />
-                </div>
-                <div class="form-group">
-                    <label for="newTerritoryCEP">CEP Principal</label>
-                    <input id="newTerritoryCEP" type="text"
-                        placeholder="Ex: 60325-000"
-                        maxlength="9" />
-                </div>
-                <div
-                    style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap">
-                    <button class="btn btn-secondary" type="button"
-                        data-close="newTerritoryModal">Cancelar</button>
-                    <button id="createTerritoryBtn" class="btn btn-success"
-                        type="button">Criar Território</button>
-                </div>
-            </div>
+    <div class="layout" id="layoutRoot">
+      <aside class="sidebar" id="sidebar">
+        <h3>📋 Visão Geral</h3>
+        <div class="search">
+          <input id="territorySearch" type="search" placeholder="🔎 Buscar...">
         </div>
-
-        <!-- Dias Trabalhados -->
-        <div id="diasModal" class="modal" aria-hidden="true" role="dialog"
-            aria-modal="true" aria-labelledby="diasModalTitle">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 id="diasModalTitle">📅 Adicionar Dia Trabalhado</h2>
-                    <button class="close-modal" type="button"
-                        data-close="diasModal"
-                        aria-label="Fechar">×</button>
-                </div>
-                <div class="form-group">
-                    <label for="diaDate">Data</label>
-                    <input type="date" id="diaDate" />
-                </div>
-                <div class="form-group">
-                    <label for="diaRuas">Ruas / Quadras Trabalhadas
-                        (opcional)</label>
-                    <textarea id="diaRuas"
-                        placeholder="Ex: Rua A, Quadra 10, Av. B"></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="diaObs">Observações do dia (opcional)</label>
-                    <textarea id="diaObs"
-                        placeholder="Ex: Manhã chuvosa, poucas pessoas em casa"></textarea>
-                </div>
-                <div
-                    style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap">
-                    <button class="btn btn-secondary" type="button"
-                        data-close="diasModal">Cancelar</button>
-                    <button class="btn btn-success" type="button"
-                        id="saveDiaBtn">💾
-                        Salvar</button>
-                </div>
-            </div>
+        <div style="margin-bottom:12px;padding:6px 0;border-bottom:2px solid var(--border)">
+          <small style="color:var(--text-secondary)">Total:</small>
+          <strong id="totalTerritories">0</strong>
         </div>
-
-        <!-- Selecionar Bloco -->
-        <div id="blockModal" class="modal" aria-hidden="true" role="dialog"
-            aria-modal="true" aria-labelledby="blockModalTitle">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 id="blockModalTitle">🏢 Selecionar Bloco</h2>
-                    <button class="close-modal" type="button"
-                        data-close="blockModal"
-                        aria-label="Fechar">×</button>
-                </div>
-                <div class="block-selector" id="blockSelector"></div>
-            </div>
-        </div>
-
-        <!-- Lista de Apartamentos -->
-        <div id="apartmentListModal" class="modal" aria-hidden="true"
-            role="dialog"
-            aria-modal="true" aria-labelledby="apartmentListTitle">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 id="apartmentListTitle">🏢 Apartamentos</h2>
-                    <button class="close-modal" type="button"
-                        data-close="apartmentListModal"
-                        aria-label="Fechar">×</button>
-                </div>
-
-                <div
-                    style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap">
-                    <label
-                        style="display:flex;align-items:center;gap:8px;cursor:pointer">
-                        <input id="onlyNotedToggle" type="checkbox" /> Mostrar
-                        só com Notas
-                    </label>
-
-                    <div style="display:flex;gap:8px;flex-wrap:wrap">
-                        <button id="resetStatusBtn" class="btn btn-secondary"
-                            type="button">🔄 Resetar Status</button>
-                        <button id="bulkMarkBtn" class="btn btn-secondary"
-                            type="button">📌
-                            Marcar em Massa</button>
-                    </div>
-                </div>
-
-                <div class="apartment-selector" id="apartmentSelector"></div>
-            </div>
-        </div>
-
-        <!-- Apartamento (nota) -->
-        <div id="apartmentModal" class="modal" aria-hidden="true" role="dialog"
-            aria-modal="true" aria-labelledby="apartmentModalTitle">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 id="apartmentModalTitle">🏠 Apartamento</h2>
-                    <button class="close-modal" type="button"
-                        data-close="apartmentModal"
-                        aria-label="Fechar">×</button>
-                </div>
-
-                <div id="existingNoteDisplay" style="display:none"></div>
-
-                <div class="form-group">
-                    <label for="apartmentDia">📅 Dia Trabalhado</label>
-                    <input type="date" id="apartmentDia" />
-                </div>
-
-                <div class="form-group">
-                    <label for="apartmentNotes">📋 Observações</label>
-                    <textarea id="apartmentNotes"
-                        placeholder="Ex: Deixou carta, não estava, recusou, conversou sobre..."></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="apartmentStatus">📌 Status da Visita</label>
-                    <select id="apartmentStatus">
-                        <option value>Selecione...</option>
-                        <option value="nao-visitado">📘 Não Visitado</option>
-                        <option value="ausente">🚪 Ausente</option>
-                        <option value="conversado">💬 Conversado</option>
-                        <option value="carta">✉️ Deixou Carta</option>
-                        <option value="folheto">📄 Deixou Folheto</option>
-                        <option value="recusou">🚫 Recusou</option>
-                        <option value="estudo">📚 Estudo Marcado</option>
-                    </select>
-                </div>
-
-                <div
-                    style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap">
-                    <button class="btn btn-secondary" type="button"
-                        data-close="apartmentModal">Cancelar</button>
-                    <button id="deleteApartmentNoteBtn" class="btn btn-danger"
-                        type="button" style="display:none">🗑️ Apagar
-                        Nota</button>
-                    <button class="btn btn-success" type="button"
-                        id="saveApartmentNoteBtn">💾 Salvar</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Detalhes do Endereço (casa) -->
-        <div id="addressDetailsModal" class="modal" aria-hidden="true"
-            role="dialog"
-            aria-modal="true" aria-labelledby="addressDetailsModalTitle">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 id="addressDetailsModalTitle">🏠 Detalhes do
-                        Endereço</h2>
-                    <button class="close-modal" type="button"
-                        data-close="addressDetailsModal"
-                        aria-label="Fechar">×</button>
-                </div>
-
-                <div id="addressInfoDisplay"
-                    style="margin-bottom:16px;padding:12px;border-bottom:2px solid var(--border)"></div>
-
-                <div class="form-group">
-                    <label for="addressStatusSelect">📌 Status da Visita</label>
-                    <select id="addressStatusSelect">
-                        <option value>Selecione...</option>
-                        <option value="nao-visitado">📘 Não Visitado</option>
-                        <option value="ausente">🚪 Ausente</option>
-                        <option value="conversado">💬 Conversado</option>
-                        <option value="carta">✉️ Deixou Carta</option>
-                        <option value="folheto">📄 Deixou Folheto</option>
-                        <option value="recusou">🚫 Recusou</option>
-                        <option value="estudo">📚 Estudo Marcado</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="addressDia">📅 Data da Visita (Opcional)</label>
-                    <input id="addressDia" type="date" />
-                </div>
-
-                <div class="form-group">
-                    <label for="addressObs">Observações do Endereço</label>
-                    <textarea id="addressObs"
-                        placeholder="Ex: Morador não estava, vizinho pegou folheto"></textarea>
-                </div>
-
-                <div
-                    style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap">
-                    <button class="btn btn-secondary" type="button"
-                        data-close="addressDetailsModal">Cancelar</button>
-                    <button id="deleteAddressNoteBtn" class="btn btn-danger"
-                        type="button"
-                        style="display:none">🗑️ Apagar Nota</button>
-                    <button class="btn btn-success" type="button"
-                        id="saveAddressDetailsBtn">💾 Salvar Detalhes</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="toast" class="toast" role="status" aria-live="polite"></div>
-
-        <script>
-      // GitHub Copilot
-      // Código reorganizado, duplicatas removidas, ids únicos e inicialização consolidada.
-            
-      const STORAGE_KEY = 'territorios_monte_castelo';
-      const HISTORY_KEY = 'territorios_history';
-      const MAX_HISTORY = 50;
-      const MAX_IMPORT_BYTES = 1024 * 1024 * 1024; // 1024 MB
-
-      const mapLinks = {1:'https://maps.app.goo.gl/XXZFyFwbCjsePvyq8',2:'https://maps.app.goo.gl/5RfgEJun9nYpD6Dk8',3:'https://maps.app.goo.gl/bUaHrWpoq2nHzmH66',4:'https://maps.app.goo.gl/bKGM7NxE6vvUc9uw7',5:'https://maps.app.goo.gl/jKBjRV7FdqfFGux98',6:'https://maps.app.goo.gl/uzgpAzA4zmQBUqgTA',7:'https://maps.app.goo.gl/fgZWwebRsoHjUweL6',8:'https://maps.app.goo.gl/VsP5Zc7P9gkjJ59B7'};
-            const initialTerritories = {
-  "t1":  { id:"t1",  numero: 1, nome:"SR",                     cep:"60325-110", cor:"#48bb78", addresses:[], diasTrabalhados:[], fixado:false },
-  "t2":  { id:"t2",  numero: 2, nome:"Amaro Cavalcante",       cep:"60325-120", cor:"#4299e1", addresses:[], diasTrabalhados:[], fixado:false },
-  "t3":  { id:"t3",  numero: 3, nome:"Casa da ração",          cep:"60325-130", cor:"#ed8936", addresses:[], diasTrabalhados:[], fixado:false },
-  "t4":  { id:"t4",  numero: 4, nome:"Correios x Chico Alves", cep:"60325-140", cor:"#9c6644", addresses:[], diasTrabalhados:[], fixado:false },
-  "t5":  { id:"t5",  numero: 5, nome:"Carneiro da Cunha",      cep:"60325-150", cor:"#ecc94b", addresses:[], diasTrabalhados:[], fixado:false },
-  "t6":  { id:"t6",  numero: 6, nome:"Morro do Ouro",          cep:"60325-160", cor:"#f56565", addresses:[], diasTrabalhados:[], fixado:false },
-  "t7":  { id:"t7",  numero: 7, nome:"Frangolândia",           cep:"60325-170", cor:"#9f7aea", addresses:[], diasTrabalhados:[], fixado:false },
-  "t8":  { id:"t8",  numero: 8, nome:"Pdr Anchieta x Bezerra", cep:"60325-180", cor:"#ed64a6", addresses:[], diasTrabalhados:[], fixado:false },
-
-  // Novos territórios 9–16
-  "t9":  { id:"t9",  numero: 9,  nome:"Território 9",  cep:"60325-190", cor:"#38b2ac", addresses:[], diasTrabalhados:[], fixado:false },
-  "t10": { id:"t10", numero:10,  nome:"Território 10", cep:"60325-200", cor:"#667eea", addresses:[], diasTrabalhados:[], fixado:false },
-  "t11": { id:"t11", numero:11,  nome:"Território 11", cep:"60325-210", cor:"#fc8181", addresses:[], diasTrabalhados:[], fixado:false },
-  "t12": { id:"t12", numero:12,  nome:"Território 12", cep:"60325-220", cor:"#f6ad55", addresses:[], diasTrabalhados:[], fixado:false },
-  "t13": { id:"t13", numero:13,  nome:"Território 13", cep:"60325-230", cor:"#68d391", addresses:[], diasTrabalhados:[], fixado:false },
-  "t14": { id:"t14", numero:14,  nome:"Território 14", cep:"60325-240", cor:"#4fd1c5", addresses:[], diasTrabalhados:[], fixado:false },
-  "t15": { id:"t15", numero:15,  nome:"Território 15", cep:"60325-250", cor:"#63b3ed", addresses:[], diasTrabalhados:[], fixado:false },
-  "t16": { id:"t16", numero:16,  nome:"Território 16", cep:"60325-260", cor:"#fbb6ce", addresses:[], diasTrabalhados:[], fixado:false },
-
-  // Novos territórios 17–25
-  "t17": { id:"t17", numero:17,  nome:"Território 17", cep:"60325-270", cor:"#c4b5fd", addresses:[], diasTrabalhados:[], fixado:false },
-  "t18": { id:"t18", numero:18,  nome:"Território 18", cep:"60325-280", cor:"#facc15", addresses:[], diasTrabalhados:[], fixado:false },
-  "t19": { id:"t19", numero:19,  nome:"Território 19", cep:"60325-290", cor:"#22c55e", addresses:[], diasTrabalhados:[], fixado:false },
-  "t20": { id:"t20", numero:20,  nome:"Território 20", cep:"60325-300", cor:"#0ea5e9", addresses:[], diasTrabalhados:[], fixado:false },
-  "t21": { id:"t21", numero:21,  nome:"Território 21", cep:"60325-310", cor:"#f97316", addresses:[], diasTrabalhados:[], fixado:false },
-  "t22": { id:"t22", numero:22,  nome:"Território 22", cep:"60325-320", cor:"#a855f7", addresses:[], diasTrabalhados:[], fixado:false },
-  "t23": { id:"t23", numero:23,  nome:"Território 23", cep:"60325-330", cor:"#14b8a6", addresses:[], diasTrabalhados:[], fixado:false },
-  "t24": { id:"t24", numero:24,  nome:"Território 24", cep:"60325-340", cor:"#f472b6", addresses:[], diasTrabalhados:[], fixado:false },
-  "t25": { id:"t25", numero:25,  nome:"Território 25", cep:"60325-350", cor:"#f97373", addresses:[], diasTrabalhados:[], fixado:false }
-};
-
-
-      const demoJson = {
-        territories: {
-          "t1": { id: "t1", numero:1, nome:"SR - Demo", cep:"60325-110", cor:"#2b6cb0", fixado:true, diasTrabalhados:[{data:"2025-10-01",ruas:"Rua A, Rua B",obs:"Dia de campanha",timestamp:new Date().toISOString()}], addresses:[{id:"a1",type:"house",logradouro:"Rua Demo",numero:"100",cep:"60325-110",bairro:"Monte Castelo",cidade:"Fortaleza",uf:"CE"}, {id:"b1",type:"building",logradouro:"Av. Exemplo",numero:"45",name:"Ed. Alfa",cep:"60325-111",bairro:"Centro",cidade:"Fortaleza",uf:"CE",blocks:["A","B"],apartmentsPerBlock:4,totalApartments:8,portariaEletronica:true}]}
-        },
-        apartmentNotes: {"t1_b1_A_01":{notes:"Deixou carta",status:"carta",dia:"2025-10-01",updatedAt:new Date().toISOString()}},
-        addressNotes: {"t1_a1":{status:"conversado",dia:"2025-10-01",obs:"Morador recebeu bem",updatedAt:new Date().toISOString()}},
-        isolatedTerritory: null
-      };
-
-      let state = { territories:{}, apartmentNotes:{}, addressNotes:{}, isolatedTerritory:null };
-      let history = [], historyIndex = -1;
-      let currentTerritory = null, currentBuilding = null, currentBlock = null, currentApartment = null, currentAddress = null;
-
-      function generateId(){ return 'id_' + Date.now() + '_' + Math.random().toString(36).slice(2,9); }
-      function escapeHtml(text){ const d=document.createElement('div'); d.textContent = text || ''; return d.innerHTML; }
-      function deepClone(o){ return JSON.parse(JSON.stringify(o)); }
-      function showToast(message,duration=2500){ const toast=document.getElementById('toast'); toast.textContent=message; toast.classList.add('show'); clearTimeout(toast._timeout); toast._timeout=setTimeout(()=>toast.classList.remove('show'),duration); }
-
-      // Tooltip
-      const tooltip = document.getElementById('tooltipContainer');
-      let tooltipTimeout = null; let tooltipLocked = false;
-      function showTooltip(element, content, delay=350){
-        clearTimeout(tooltipTimeout);
-        tooltipTimeout = setTimeout(()=>{
-          tooltip.innerHTML = content;
-          tooltip.classList.add('show');
-          tooltip.style.pointerEvents = 'auto';
-          const rect = element.getBoundingClientRect();
-          const padding = 10;
-          const maxWidth = Math.min(window.innerWidth * 0.9, 400);
-          tooltip.style.maxWidth = maxWidth + 'px';
-          setTimeout(()=>{
-            const tooltipRect = tooltip.getBoundingClientRect();
-            let left = rect.left + (rect.width/2) - (tooltipRect.width/2);
-            let top = rect.bottom + padding;
-            let position = 'bottom';
-            if(top + tooltipRect.height > window.innerHeight - padding){
-              const topAlt = rect.top - tooltipRect.height - padding;
-              if(topAlt >= padding){ top = topAlt; position = 'top'; }
-              else {
-                const leftAlt = rect.right + padding;
-                if(leftAlt + tooltipRect.width <= window.innerWidth - padding){ left = leftAlt; top = rect.top + (rect.height/2) - (tooltipRect.height/2); position = 'right'; }
-                else {
-                  const leftAlt2 = rect.left - tooltipRect.width - padding;
-                  if(leftAlt2 >= padding){ left = leftAlt2; top = rect.top + (rect.height/2) - (tooltipRect.height/2); position = 'left'; }
-                  else { top = padding; position = 'top'; }
-                }
-              }
-            }
-            if(left < padding) left = padding;
-            if(left + tooltipRect.width > window.innerWidth - padding) left = window.innerWidth - tooltipRect.width - padding;
-            if(top < padding) top = padding;
-            if(top + tooltipRect.height > window.innerHeight - padding) top = window.innerHeight - tooltipRect.height - padding;
-            tooltip.style.left = left + 'px';
-            tooltip.style.top = top + 'px';
-            tooltip.setAttribute('data-position', position);
-          },0);
-        }, delay);
-      }
-      function hideTooltip(){ if(tooltipLocked) return; clearTimeout(tooltipTimeout); tooltip.classList.remove('show'); tooltip.style.pointerEvents = 'none'; }
-      tooltip.addEventListener('mouseenter', ()=>tooltipLocked = true);
-      tooltip.addEventListener('mouseleave', ()=>{ tooltipLocked = false; hideTooltip(); });
-
-      function buildTerritoryTooltip(territory){
-        const buildings = territory.addresses?.filter(a=>a.type==='building').length || 0;
-        const houses = territory.addresses?.filter(a=>a.type==='house').length || 0;
-        const totalApts = territory.addresses?.filter(a=>a.type==='building').reduce((s,b)=>s+(b.totalApartments||0),0) || 0;
-        return `<h4>📍 ${escapeHtml(territory.nome)}</h4><div class="tooltip-divider"></div>
-                <div class="tooltip-item"><span class="tooltip-label">Número:</span><span class="tooltip-value">${territory.numero}</span></div>
-                <div class="tooltip-item"><span class="tooltip-label">CEP Base:</span><span class="tooltip-value">${escapeHtml(territory.cep)}</span></div>
-                <div class="tooltip-divider"></div>
-                <div class="tooltip-item"><span class="tooltip-label">🏠 Casas:</span><span class="tooltip-value">${houses}</span></div>
-                <div class="tooltip-item"><span class="tooltip-label">🏢 Prédios:</span><span class="tooltip-value">${buildings}</span></div>
-                <div class="tooltip-item"><span class="tooltip-label">🚪 Apartamentos:</span><span class="tooltip-value">${totalApts}</span></div>
-                <div class="tooltip-divider"></div>
-                <div class="tooltip-item"><span class="tooltip-label">📅 Dias Trabalhados:</span><span class="tooltip-value">${territory.diasTrabalhados?.length||0}</span></div>
-                ${territory.fixado?'<div class="tooltip-item"><span class="tooltip-label">Status:</span><span class="tooltip-value">📌 Fixado</span></div>':''}`;
-      }
-
-      function buildApartmentTooltip(noteData){
-        if(!noteData) return `<div style="text-align:center;color:var(--muted)">Nenhuma informação registrada</div>`;
-        const statusLabels = {'nao-visitado':'📘 Não Visitado','ausente':'🚪 Ausente','conversado':'💬 Conversado','carta':'✉️ Deixou Carta','folheto':'📄 Deixou Folheto','recusou':'🚫 Recusou','estudo':'📚 Estudo Marcado'};
-        let html = '<h4>📋 Informações do Apartamento</h4><div class="tooltip-divider"></div>';
-        if(noteData.dia) html += `<div class="tooltip-item"><span class="tooltip-label">📅 Última Visita:</span><span class="tooltip-value">${new Date(noteData.dia).toLocaleDateString('pt-BR')}</span></div>`;
-        if(noteData.status) html += `<div class="tooltip-item"><span class="tooltip-label">Status:</span><span class="tooltip-value">${statusLabels[noteData.status]||noteData.status}</span></div>`;
-        if(noteData.notes) html += `<div class="tooltip-divider"></div><div style="margin-top:8px"><div class="tooltip-label" style="margin-bottom:4px">Observações:</div><div style="font-size:0.85rem;line-height:1.4;color:var(--text)">${escapeHtml(noteData.notes.substring(0,150))}${noteData.notes.length>150?'...':''}</div></div>`;
-        if(noteData.updatedAt) html += `<div class="tooltip-divider"></div><div style="font-size:0.8rem;color:var(--muted);margin-top:8px">Atualizado: ${new Date(noteData.updatedAt).toLocaleString('pt-BR')}</div>`;
-        return html;
-      }
-
-      function buildBuildingTooltip(building){
-        const portariaText = building.portariaEletronica?'<span class="portaria-badge portaria-eletronica">🔐 Portaria Eletrônica</span>':'<span class="portaria-badge portaria-normal">🚪 Portaria Normal</span>';
-        return `<h4>🏢 ${escapeHtml(building.name||'Prédio')}</h4><div class="tooltip-divider"></div>
-                <div class="tooltip-item"><span class="tooltip-label">Endereço:</span><span class="tooltip-value">${escapeHtml(building.logradouro)}, ${escapeHtml(building.numero||'')}</span></div>
-                <div class="tooltip-item"><span class="tooltip-label">Bairro:</span><span class="tooltip-value">${escapeHtml(building.bairro||'N/A')}</span></div>
-                <div class="tooltip-item"><span class="tooltip-label">CEP:</span><span class="tooltip-value">${escapeHtml(building.cep||'N/A')}</span></div>
-                <div class="tooltip-divider"></div>
-                <div class="tooltip-item"><span class="tooltip-label">Blocos:</span><span class="tooltip-value">${building.blocks?.length||0}</span></div>
-                <div class="tooltip-item"><span class="tooltip-label">Apts/Bloco:</span><span class="tooltip-value">${building.apartmentsPerBlock||0}</span></div>
-                <div class="tooltip-item"><span class="tooltip-label">Total de Apts:</span><span class="tooltip-value">${building.totalApartments||0}</span></div>
-                <div class="tooltip-divider"></div><div style="margin-top:8px">${portariaText}</div>`;
-      }
-
-      function buildAddressTooltip(address,noteData){
-        let html = `<h4>🏠 ${escapeHtml(address.logradouro)}, ${escapeHtml(address.numero||'S/N')}</h4><div class="tooltip-divider"></div>
-                <div class="tooltip-item"><span class="tooltip-label">Bairro:</span><span class="tooltip-value">${escapeHtml(address.bairro||'N/A')}</span></div>
-                <div class="tooltip-item"><span class="tooltip-label">CEP:</span><span class="tooltip-value">${escapeHtml(address.cep||'N/A')}</span></div>`;
-        if(noteData){
-          const labels = {'nao-visitado':'📘 Não Visitado','ausente':'🚪 Ausente','conversado':'💬 Conversado','carta':'✉️ Deixou Carta','folheto':'📄 Deixou Folheto','recusou':'🚫 Recusou','estudo':'📚 Estudo Marcado'};
-          html += '<div class="tooltip-divider"></div>';
-          if(noteData.dia) html += `<div class="tooltip-item"><span class="tooltip-label">📅 Última Visita:</span><span class="tooltip-value">${new Date(noteData.dia).toLocaleDateString('pt-BR')}</span></div>`;
-          if(noteData.status) html += `<div class="tooltip-item"><span class="tooltip-label">Status:</span><span class="tooltip-value">${labels[noteData.status]||noteData.status}</span></div>`;
-          if(noteData.obs) html += `<div class="tooltip-divider"></div><div style="margin-top:8px"><div class="tooltip-label" style="margin-bottom:4px">Observações:</div><div style="font-size:0.85rem;line-height:1.4;color:var(--text)">${escapeHtml(noteData.obs.substring(0,150))}${noteData.obs.length>150?'...':''}</div></div>`;
-        }
-        return html;
-      }
-
-      function buildDiaTooltip(diaData){
-        let html = `<h4>📅 ${new Date(diaData.data).toLocaleDateString('pt-BR',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}</h4><div class="tooltip-divider"></div>`;
-        if(diaData.ruas && diaData.ruas.trim()) html += `<div style="margin-bottom:12px"><div class="tooltip-label" style="margin-bottom:6px">🗺️ Ruas/Quadras Trabalhadas:</div><div style="font-size:0.9rem;line-height:1.5;color:var(--text);white-space:pre-wrap">${escapeHtml(diaData.ruas)}</div></div>`;
-        if(diaData.obs && diaData.obs.trim()) html += `<div style="margin-bottom:8px"><div class="tooltip-label" style="margin-bottom:6px">📝 Observações do Dia:</div><div style="font-size:0.9rem;line-height:1.5;color:var(--text);white-space:pre-wrap">${escapeHtml(diaData.obs)}</div></div>`;
-        if((!diaData.ruas || !diaData.ruas.trim()) && (!diaData.obs || !diaData.obs.trim())) html += `<div style="text-align:center;color:var(--muted);padding:8px 0">Nenhuma observação registrada para este dia</div>`;
-        if(diaData.timestamp) html += `<div class="tooltip-divider"></div><div style="font-size:0.8rem;color:var(--muted);margin-top:8px;text-align:center">Registrado em: ${new Date(diaData.timestamp).toLocaleString('pt-BR')}</div>`;
-        return html;
-      }
-
-      // HISTORY
-      function saveToHistory(){
-        if(historyIndex < history.length - 1) history = history.slice(0, historyIndex + 1);
-        history.push(deepClone(state));
-        if(history.length > MAX_HISTORY) history.shift();
-        else historyIndex++;
-        updateUndoRedoButtons();
-        try{ localStorage.setItem(HISTORY_KEY, JSON.stringify({history, historyIndex})); } catch(e){ console.error(e); }
-      }
-      function undo(){ if(historyIndex > 0){ historyIndex--; state = deepClone(history[historyIndex]); persist(false,false); renderTerritories(); if(currentTerritory && state.territories[currentTerritory]) openTerritory(currentTerritory); else renderOverview(); updateUndoRedoButtons(); showToast('↶ Ação desfeita'); } }
-      function redo(){ if(historyIndex < history.length - 1){ historyIndex++; state = deepClone(history[historyIndex]); persist(false,false); renderTerritories(); if(currentTerritory && state.territories[currentTerritory]) openTerritory(currentTerritory); else renderOverview(); updateUndoRedoButtons(); showToast('↷ Ação refeita'); } }
-      function updateUndoRedoButtons(){ document.getElementById('undoBtn').disabled = historyIndex <= 0; document.getElementById('redoBtn').disabled = historyIndex >= history.length - 1; }
-
-      // PERSISTÊNCIA
-      function loadState(fromJson){
-        try{
-          if(fromJson){
-            state.territories = fromJson.territories ? deepClone(fromJson.territories) : deepClone(initialTerritories);
-            state.apartmentNotes = fromJson.apartmentNotes || {};
-            state.addressNotes = fromJson.addressNotes || {};
-            state.isolatedTerritory = fromJson.isolatedTerritory || null;
-            showToast('✅ Dados importados');
-          } else {
-            const saved = localStorage.getItem(STORAGE_KEY);
-            if(saved){
-              const parsed = JSON.parse(saved);
-              state.territories = parsed.territories || deepClone(initialTerritories);
-              state.apartmentNotes = parsed.apartmentNotes || {};
-              state.addressNotes = parsed.addressNotes || {};
-              state.isolatedTerritory = parsed.isolatedTerritory || null;
-            } else {
-              state.territories = deepClone(initialTerritories);
-            }
-            const savedHistory = localStorage.getItem(HISTORY_KEY);
-            if(savedHistory){
-              const parsed = JSON.parse(savedHistory);
-              history = parsed.history || []; historyIndex = parsed.historyIndex || -1;
-            }
-          }
-          if(history.length === 0) saveToHistory();
-          updateUndoRedoButtons();
-        } catch(e){ console.error('Erro ao carregar dados:',e); state.territories = deepClone(initialTerritories); state.apartmentNotes = {}; state.addressNotes = {}; showToast('⚠️ Erro ao carregar – estado inicial usado'); }
-      }
-
-      function persist(showMessage = true, addToHistory = true){
-        try{
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-          if(addToHistory) saveToHistory();
-          if(showMessage) showToast('💾 Dados salvos');
-        } catch(e){ console.error('Erro ao salvar:', e); showToast('❌ Erro ao salvar'); }
-      }
-
-      // THEME
-      function toggleTheme(){ const current = document.documentElement.getAttribute('data-theme'); applyTheme(current === 'dark' ? 'light' : 'dark'); }
-      function applyTheme(theme){ if(theme === 'dark'){ document.documentElement.setAttribute('data-theme','dark'); document.getElementById('themeBtn').innerText = '☀️ Tema'; } else { document.documentElement.removeAttribute('data-theme'); document.getElementById('themeBtn').innerText = '🌙 Tema'; } localStorage.setItem('theme', theme); }
-
-      // RENDER & UI
-      function renderTerritories(){
-        const list = document.getElementById('territoriesList');
-        const searchQuery = (document.getElementById('territorySearch').value || '').toLowerCase().trim();
-        let territories = Object.values(state.territories || {});
-        if(state.isolatedTerritory) territories = territories.filter(t => t.id === state.isolatedTerritory);
-        if(searchQuery) territories = territories.filter(t => `${t.numero} ${t.nome}`.toLowerCase().includes(searchQuery));
-        territories.sort((a,b)=>{ if(a.fixado && !b.fixado) return -1; if(!a.fixado && b.fixado) return 1; return a.numero - b.numero; });
-        list.innerHTML = '';
-        territories.forEach(t=>{
-          const btn = document.createElement('button');
-          btn.type = 'button';
-          btn.className = `tab ${t.fixado ? 'fixado' : ''} ${currentTerritory === t.id ? 'active' : ''}`;
-          btn.setAttribute('data-id', t.id);
-          btn.setAttribute('role', 'listitem');
-          btn.setAttribute('aria-label', `Abrir território ${t.numero} ${t.nome}`);
-          btn.innerHTML = `<span class="tab-badge" style="background:${t.cor}">${t.numero}</span>
-              <div style="flex:1;min-width:0">
-                  <div style="font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(t.nome)}</div>
-                  <div style="font-size:.85rem;color:var(--muted)">${(t.diasTrabalhados?.length||0)} dias • ${(t.addresses?.length||0)} end.</div>
-              </div>`;
-          btn.addEventListener('click', ()=>{
-            openTerritory(t.id);
-            if(window.innerWidth <= 768) toggleSidebar();
-          });
-          btn.addEventListener('mouseenter', e=>showTooltip(e.currentTarget, buildTerritoryTooltip(t)));
-          btn.addEventListener('mouseleave', hideTooltip);
-          btn.addEventListener('focus', e=>showTooltip(e.currentTarget, buildTerritoryTooltip(t),800));
-          btn.addEventListener('blur', hideTooltip);
-          list.appendChild(btn);
-        });
-        document.getElementById('totalTerritories').textContent = territories.length;
-      }
-
-      function renderOverview(){
-        const territories = Object.values(state.territories || {});
-        const totalAddresses = territories.reduce((s,t)=>s+(t.addresses?.length||0),0);
-        const totalDias = territories.reduce((s,t)=>s+(t.diasTrabalhados?.length||0),0);
-        const totalBuildings = territories.reduce((s,t)=>s+(t.addresses?.filter(a=>a.type==='building').length||0),0);
-        const totalApartments = territories.reduce((s,t)=>s+(t.addresses?.filter(a=>a.type==='building').reduce((sum,b)=>sum+(b.totalApartments||0),0)||0),0);
-        document.getElementById('mainContent').innerHTML = `
-            <h2 style="margin-bottom:16px">📊 Visão Geral do Sistema</h2>
-            <div class="stats-grid">
-                <div class="stat-card"><h4>${territories.length}</h4><p>Territórios</p></div>
-                <div class="stat-card"><h4>${totalAddresses}</h4><p>Endereços</p></div>
-                <div class="stat-card"><h4>${totalBuildings}</h4><p>Prédios</p></div>
-                <div class="stat-card"><h4>${totalApartments}</h4><p>Apartamentos</p></div>
-                <div class="stat-card"><h4>${totalDias}</h4><p>Dias Trabalhados</p></div>
-            </div>
-            <div class="card">
-                <h3 style="margin-bottom:16px">🗺️ Territórios Cadastrados</h3>
-                <div class="address-list">
-                    ${territories.map(t=>`
-                        <div class="address-item" style="border-left-color:${t.cor};cursor:pointer" role="button" tabindex="0" aria-label="Abrir território ${t.numero} ${escapeHtml(t.nome)}">
-                            <div style="flex:1;min-width:0" onclick="openTerritory('${t.id}')">
-                                <strong>${t.fixado ? '📌 ' : '📍 '}${t.numero}. ${escapeHtml(t.nome)}</strong>
-                                <div style="color:var(--muted);margin-top:4px">${t.cep} • ${t.diasTrabalhados?.length||0} dias • ${t.addresses?.length||0} endereços</div>
-                            </div>
-                            <div style="display:flex;gap:8px">
-                                <button class="btn btn-secondary" type="button" onclick="event.stopPropagation(); openTerritory('${t.id}')" aria-label="Ver território ${t.numero}">📋 Ver</button>
-                                <button class="btn ${t.fixado ? 'btn-warning' : 'btn-success'}" type="button" onclick="event.stopPropagation(); (function(){ state.territories['${t.id}'].fixado = !state.territories['${t.id}'].fixado; persist(); renderTerritories(); showToast(state.territories['${t.id}'].fixado ? '📌 Fixado' : '📍 Desafixado'); })()" aria-pressed="${t.fixado}" aria-label="${t.fixado ? 'Desafixar' : 'Fixar'}">📌</button>
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-        `;
-      }
-
-      function openTerritory(id){
-        currentTerritory = id;
-        const territory = state.territories[id];
-        if(!territory) return;
-        if(!territory.addresses) territory.addresses = [];
-        if(!territory.diasTrabalhados) territory.diasTrabalhados = [];
-        const mapLink = mapLinks[territory.numero] || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(territory.nome + ', Fortaleza, CE')}`;
-
-        document.getElementById('mainContent').innerHTML = `
-            <div class="card" style="background:linear-gradient(135deg, ${territory.cor}22, transparent)">
-                <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
-                    <div style="min-width:0;flex:1">
-                        <h2 style="margin-bottom:6px">${territory.fixado ? '📌 ' : '📍 '}Território ${territory.numero}: ${escapeHtml(territory.nome)}</h2>
-                        <div style="color:var(--muted)">${territory.cep} • ${territory.diasTrabalhados.length} dias • ${territory.addresses.length} endereços</div>
-                    </div>
-                    <div style="display:flex;gap:8px;flex-wrap:wrap">
-                        <button class="btn ${territory.fixado ? 'btn-warning' : 'btn-success'}" onclick="toggleFixar()" type="button">${territory.fixado ? '📌 Fixado' : '📌 Fixar'}</button>
-                        <button class="btn ${state.isolatedTerritory ? 'btn-warning' : 'btn-success'}" onclick="toggleIsolate()" type="button">${state.isolatedTerritory ? '🔓 Ver Todos' : '🔒 Isolar'}</button>
-                        <button class="btn btn-success" onclick="openDiasModal()" type="button">📅 Dia</button>
-                        <button class="btn btn-primary" onclick="exportTerritoryPDF()" type="button" style="background:#0b2640;color:#ffffff;border:2px solid #062136;">📄 PDF</button>
-                        <a class="btn btn-primary" href="${mapLink}" target="_blank" rel="noopener" style="background:#0b2640;color:#ffffff;border:2px solid #062136;">🗺️ Maps</a>
-                        <button class="btn btn-secondary" onclick="renameTerritory()" type="button">✏️ Renomear</button>
-                        <button class="btn btn-danger" onclick="deleteTerritory()" type="button">🗑️ Excluir</button>
-                        <button class="btn btn-secondary" onclick="renderOverview()" type="button">🔙 Voltar</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <h3>📅 Dias Trabalhados (${territory.diasTrabalhados.length})</h3>
-                <div class="dias-list">
-                    ${territory.diasTrabalhados.length > 0 ? territory.diasTrabalhados.map((d,i)=>`
-                        <div class="dia-badge" onmouseenter="showTooltip(this, buildDiaTooltip(${JSON.stringify(d).replace(/"/g,'&quot;')}))" onmouseleave="hideTooltip()" onfocus="showTooltip(this, buildDiaTooltip(${JSON.stringify(d).replace(/"/g,'&quot;')}),800)" onblur="hideTooltip()" tabindex="0" style="cursor:help">
-                            📅 ${new Date(d.data).toLocaleDateString('pt-BR')}
-                            <button onclick="event.stopPropagation(); hideTooltip(); removeDia(${i})" title="Remover dia" type="button">×</button>
-                        </div>
-                    `).join('') : '<p style="color:var(--muted);margin-top:10px">Nenhum dia trabalhado registrado</p>'}
-                </div>
-            </div>
-
-            <div class="card">
-                <h3>🔍 Buscar Endereço por CEP</h3>
-                <div class="form-row">
-                    <input type="text" id="cepInput" placeholder="Digite o CEP (ex: 60325-110)" maxlength="9" />
-                    <button class="btn btn-success" onclick="searchCEP()" type="button">🔎 Buscar</button>
-                </div>
-                <div id="cepResult" style="margin-top:12px"></div>
-            </div>
-
-            <div class="card">
-                <h3>➕ Adicionar Endereço Manual</h3>
-                <div class="form-row">
-                    <input type="text" id="manualAddress" placeholder="Nome da rua ou endereço completo" />
-                    <button class="btn btn-success" onclick="addManualAddress()" type="button">➕ Casa</button>
-                </div>
-            </div>
-
-            <div class="card">
-                <h3>🏠 Endereços Cadastrados (${territory.addresses.length})</h3>
-                <div class="address-list">
-                    ${renderAddressesHtml(territory)}
-                </div>
-            </div>
-        `;
-        renderTerritories();
-      }
-
-      function renderAddressesHtml(territory){
-        if(!territory.addresses || territory.addresses.length === 0) return '<p style="color:var(--muted);text-align:center;padding:20px">Nenhum endereço cadastrado. Use as opções acima para adicionar.</p>';
-        return territory.addresses.map(addr=>{
-          const isBuilding = addr.type === 'building';
-          const leftColor = isBuilding ? 'var(--warning)' : territory.cor;
-          const hasNote = state.addressNotes[`${currentTerritory}_${addr.id}`];
-          const portariaBadge = isBuilding && addr.portariaEletronica ? '<span class="portaria-badge portaria-eletronica">🔐 Eletrônica</span>' : isBuilding ? '<span class="portaria-badge portaria-normal">🚪 Normal</span>' : '';
-          const addrEsc = (s)=>escapeHtml(s || '');
-          return `<div class="address-item" style="border-left-color:${leftColor}" onmouseenter="showTooltip(this, ${isBuilding ? `buildBuildingTooltip(${JSON.stringify(addr).replace(/"/g,'&quot;')})` : `buildAddressTooltip(${JSON.stringify(addr).replace(/"/g,'&quot;')}, ${hasNote ? JSON.stringify(state.addressNotes[`${currentTerritory}_${addr.id}`]).replace(/"/g,'&quot;') : 'null'})`})" onmouseleave="hideTooltip()">
-              <div class="address-tooltip-trigger" style="flex:1;min-width:0">
-                  <strong>${addrEsc(addr.logradouro)}${addr.name? ' • ' + addrEsc(addr.name): ''}, Nº ${addrEsc(addr.numero||'S/N')} ${isBuilding?'<span class="badge badge-warning" style="margin-left:8px">🏢 PRÉDIO</span>':''} ${isBuilding?`<span class="badge badge-warning">${addr.totalApartments} APs</span>`:''} ${portariaBadge} ${hasNote?'<span class="badge" style="background:var(--success);color:#fff;margin-left:8px">✓ Nota</span>':''}</strong>
-                  <small style="color:var(--muted);display:block;margin-top:6px">${addr.cep || 'CEP não informado'} • ${addr.bairro || ''}</small>
-              </div>
-              <div style="display:flex;gap:8px;flex-wrap:wrap">
-                  ${isBuilding ? `<button class="btn btn-warning" onclick="event.stopPropagation(); openBuildingView('${addr.id}')" type="button">🏢 Apartamentos</button>` : `<button class="btn btn-secondary" onclick="event.stopPropagation(); openAddressDetails('${addr.id}')" type="button">🔍 Detalhes</button>`}
-                  <a class="btn btn-secondary" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(addr.logradouro + ', ' + (addr.numero || '') + ', Fortaleza, CE')}" target="_blank" rel="noopener">🗺️ Ver</a>
-                  <button class="btn btn-danger" onclick="event.stopPropagation(); removeAddress('${addr.id}')" type="button">🗑️ Remover</button>
-              </div>
-          </div>`;
-        }).join('');
-      }
-
-      // TERRITORY actions
-      function toggleFixar(){ const t=state.territories[currentTerritory]; t.fixado = !t.fixado; persist(); openTerritory(currentTerritory); showToast(t.fixado ? '📌 Território fixado' : '📍 Território desafixado'); }
-      function toggleIsolate(){ if(state.isolatedTerritory){ state.isolatedTerritory = null; showToast('🔓 Visualizando todos'); } else { state.isolatedTerritory = currentTerritory; showToast('🔒 Território isolado'); } persist(); renderTerritories(); openTerritory(currentTerritory); }
-      function renameTerritory(){ if(!currentTerritory) return; const t=state.territories[currentTerritory]; const newName = prompt('✏️ Novo nome do território:', t.nome); if(!newName || newName.trim() === t.nome) return; t.nome = newName.trim(); persist(); openTerritory(currentTerritory); showToast('✏️ Nome atualizado'); }
-      function deleteTerritory(){ if(!currentTerritory) return; const t=state.territories[currentTerritory]; if(!confirm(`🗑️ Excluir território ${t.numero} - ${t.nome}?\n\nEsta ação removerá TODOS os endereços e observações relacionadas.`)) return; Object.keys(state.apartmentNotes).forEach(k=>{ if(k.startsWith(`${currentTerritory}_`)) delete state.apartmentNotes[k]; }); Object.keys(state.addressNotes).forEach(k=>{ if(k.startsWith(`${currentTerritory}_`)) delete state.addressNotes[k]; }); delete state.territories[currentTerritory]; if(state.isolatedTerritory===currentTerritory) state.isolatedTerritory = null; currentTerritory = null; persist(); renderTerritories(); renderOverview(); showToast('🗑️ Território excluído'); }
-      function createNewTerritory(){ const numero = document.getElementById('newTerritoryNumber').value; const nome = (document.getElementById('newTerritoryName').value||'').trim(); const cep = (document.getElementById('newTerritoryCEP').value||'').trim(); if(!numero || !nome){ showToast('⚠️ Preencha número e nome'); return; } const colors=['#48bb78','#4299e1','#ed8936','#9f7aea','#ed64a6','#38b2ac','#667eea','#fc8181','#f6ad55','#68d391']; const randomColor=colors[Math.floor(Math.random()*colors.length)]; const id=generateId(); state.territories[id]={ id, numero:parseInt(numero), nome, cep:cep||'60325-000', cor:randomColor, addresses:[], diasTrabalhados:[], fixado:false }; persist(); closeModal('newTerritoryModal'); renderTerritories(); openTerritory(id); showToast('✅ Território criado'); }
-
-      // DIAS
-      function openDiasModal(){ document.getElementById('diaDate').value = new Date().toISOString().split('T')[0]; document.getElementById('diaRuas').value=''; document.getElementById('diaObs').value=''; openModal('diasModal'); }
-      function saveDia(){ const data = document.getElementById('diaDate').value; const ruas = (document.getElementById('diaRuas').value||'').trim(); const obs = (document.getElementById('diaObs').value||'').trim(); if(!data){ showToast('⚠️ Selecione uma data'); return; } const t = state.territories[currentTerritory]; t.diasTrabalhados.push({data, ruas, obs, timestamp: new Date().toISOString()}); t.diasTrabalhados.sort((a,b)=>new Date(b.data)-new Date(a.data)); persist(); closeModal('diasModal'); openTerritory(currentTerritory); showToast('✅ Dia adicionado'); }
-      function removeDia(index){ if(!confirm('🗑️ Remover este dia trabalhado?')) return; const t = state.territories[currentTerritory]; t.diasTrabalhados.splice(index,1); persist(); openTerritory(currentTerritory); showToast('🗑️ Dia removido'); }
-
-      // CEP / adicionar endereços
-      async function searchCEP(){
-        const input = document.getElementById('cepInput'), result = document.getElementById('cepResult');
-        const cep = (input.value||'').replace(/\D/g,'');
-        if(cep.length !== 8){ result.innerHTML = `<p style="color:var(--danger)">❌ CEP inválido. Digite 8 dígitos.</p>`; return; }
-        result.innerHTML = '<p>⏳ Buscando informações do CEP...</p>';
-        try{
-          const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-          const data = await res.json();
-          if(data.erro){ result.innerHTML = `<p style="color:var(--danger)">❌ CEP não encontrado</p>`; return; }
-          result.innerHTML = `
-              <div class="card">
-                  <p><strong>🔍 CEP:</strong> ${data.cep}</p>
-                  <p><strong>🏠 Logradouro:</strong> ${escapeHtml(data.logradouro||'')}</p>
-                  <p><strong>📫 Bairro:</strong> ${escapeHtml(data.bairro||'')}</p>
-                  <p><strong>🌆 Cidade:</strong> ${escapeHtml(data.localidade||'')} - ${escapeHtml(data.uf||'')}</p>
-
-                  <div style="margin-top:16px" class="radio-group">
-                      <label><input type="radio" name="addressType" value="house" checked /> 🏠 Casa/Residência</label>
-                      <label><input type="radio" name="addressType" value="building" /> 🏢 Prédio/Condomínio</label>
-                  </div>
-
-                  <div id="houseFields" style="margin-top:16px">
-                      <div class="form-group"><label>Número</label><input id="houseNumber" type="text" placeholder="Ex: 123, S/N" /></div>
-                      <button class="btn btn-success" onclick='addHouseAddress(${JSON.stringify(data).replace(/'/g,"&apos;")})' type="button">➕ Adicionar Casa</button>
-                  </div>
-
-                  <div id="buildingFields" style="display:none;margin-top:16px">
-                      <div class="form-grid">
-                          <div class="form-group"><label>Nome do Prédio (opcional)</label><input id="buildingName" type="text" placeholder="Ex: Ed. Solaris" /></div>
-                          <div class="form-group"><label>Número do Prédio</label><input id="buildingNumber" type="text" placeholder="Ex: 123" /></div>
-                          <div class="form-group"><label>Tipo de Blocos</label>
-                              <select id="blockType" onchange="toggleCustomBlocks()"><option value="letter">Letras (A, B, C...)</option><option value="number">Números (1, 2, 3...)</option><option value="custom">Personalizado</option></select></div>
-                          <div class="form-group"><label>Quantidade de Blocos</label><input id="blockCount" type="number" min="1" max="50" value="1" oninput="updateBuildingPreview()" /></div>
-                          <div class="form-group"><label>Apartamentos por Bloco</label><input id="apartmentCount" type="number" min="1" max="200" value="4" oninput="updateBuildingPreview()" /></div>
-                      </div>
-                      <div class="form-group" style="margin-top:12px"><label><input type="checkbox" id="portariaEletronica" onchange="updateBuildingPreview()" /> 🔐 Portaria Eletrônica</label></div>
-                      <div id="customBlockNames" style="display:none;margin-top:12px"><label>Nomes dos Blocos (separados por vírgula)</label><input id="customBlocks" type="text" placeholder="Ex: Torre A, Torre B" /></div>
-                      <div class="building-preview" id="buildingPreview"></div>
-                      <button class="btn btn-success" onclick='addBuildingAddress(${JSON.stringify(data).replace(/'/g,"&apos;")})' style="width:100%;margin-top:12px" type="button">➕ Adicionar Prédio</button>
-                  </div>
-              </div>
-          `;
-          result.querySelectorAll('input[name="addressType"]').forEach(r=>{
-            r.addEventListener('change', e=>{
-              document.getElementById('houseFields').style.display = e.target.value === 'house' ? 'block' : 'none';
-              document.getElementById('buildingFields').style.display = e.target.value === 'building' ? 'block' : 'none';
-              if(e.target.value === 'building') updateBuildingPreview();
-            });
-          });
-          updateBuildingPreview();
-        } catch(err){ console.error(err); result.innerHTML = `<p style="color:var(--danger)">❌ Erro ao buscar CEP.</p>`; }
-      }
-
-      function toggleCustomBlocks(){ const blockType = document.getElementById('blockType').value; document.getElementById('customBlockNames').style.display = blockType === 'custom' ? 'block' : 'none'; updateBuildingPreview(); }
-
-      function updateBuildingPreview(){
-        const preview = document.getElementById('buildingPreview'); if(!preview) return;
-        const blockType = document.getElementById('blockType').value;
-        const blockCount = Math.max(1, parseInt(document.getElementById('blockCount').value || 1));
-        const apartmentCount = Math.max(1, parseInt(document.getElementById('apartmentCount').value || 4));
-        const portariaEletronica = document.getElementById('portariaEletronica')?.checked || false;
-        let blockNames = [];
-        if(blockType === 'letter'){ for(let i=0;i<blockCount;i++) blockNames.push(String.fromCharCode(65+i)); }
-        else if(blockType === 'number'){ for(let i=1;i<=blockCount;i++) blockNames.push(String(i)); }
-        else { const custom = (document.getElementById('customBlocks')?.value || '').split(',').map(s=>s.trim()).filter(Boolean); blockNames = custom.length ? custom : []; }
-        const total = (blockNames.length || blockCount) * apartmentCount;
-        const nameVal = (document.getElementById('buildingName')?.value || '').trim();
-        const portariaBadge = portariaEletronica ? '<span class="portaria-badge portaria-eletronica">🔐 Portaria Eletrônica</span>' : '<span class="portaria-badge portaria-normal">🚪 Portaria Normal</span>';
-        preview.innerHTML = `<strong>📊 Preview:</strong> ${blockCount} bloco(s) × ${apartmentCount} apt(s) = <strong style="color:var(--warning)">${total} apartamentos</strong>${blockNames.length ? `<br><small>Blocos: ${blockNames.join(', ')}</small>` : ''}${nameVal ? `<br><small>Nome: ${escapeHtml(nameVal)}</small>` : ''}<br>${portariaBadge}`;
-      }
-
-      function addHouseAddress(cepData){
-        if(!currentTerritory){ showToast('⚠️ Abra um território antes'); return; }
-        const territory = state.territories[currentTerritory];
-        const number = (document.getElementById('houseNumber').value||'').trim() || 'S/N';
-        const address = { id: generateId(), type:'house', logradouro: cepData.logradouro||'', numero:number, cep:cepData.cep||'', bairro:cepData.bairro||'', cidade:cepData.localidade||'', uf:cepData.uf||'' };
-        territory.addresses.push(address);
-        persist();
-        openTerritory(currentTerritory);
-        showToast('✅ Casa adicionada');
-      }
-
-      function addBuildingAddress(cepData){
-        if(!currentTerritory){ showToast('⚠️ Abra um território antes'); return; }
-        const territory = state.territories[currentTerritory];
-        const buildingNumber = (document.getElementById('buildingNumber').value||'').trim() || 'S/N';
-        const buildingName = (document.getElementById('buildingName')?.value || '').trim();
-        const blockType = document.getElementById('blockType').value;
-        const blockCount = Math.max(1, parseInt(document.getElementById('blockCount').value || 1));
-        const apartmentCount = Math.max(1, parseInt(document.getElementById('apartmentCount').value || 4));
-        const portariaEletronica = document.getElementById('portariaEletronica')?.checked || false;
-        let blocks = [];
-        if(blockType === 'letter'){ for(let i=0;i<blockCount;i++) blocks.push(String.fromCharCode(65+i)); }
-        else if(blockType === 'number'){ for(let i=1;i<=blockCount;i++) blocks.push(String(i)); }
-        else { blocks = (document.getElementById('customBlocks').value||'').split(',').map(s=>s.trim()).filter(Boolean); if(!blocks.length){ showToast('⚠️ Informe os nomes dos blocos'); return; } }
-        const building = { id: generateId(), type:'building', logradouro: cepData.logradouro||'', numero: buildingNumber, name: buildingName, cep: cepData.cep||'', bairro: cepData.bairro||'', cidade: cepData.localidade||'', uf: cepData.uf||'', blocks, apartmentsPerBlock: apartmentCount, totalApartments: blocks.length * apartmentCount, portariaEletronica };
-        territory.addresses.push(building);
-        persist();
-        openTerritory(currentTerritory);
-        showToast(`✅ Prédio adicionado (${building.totalApartments} apartamentos) ${portariaEletronica ? '🔐' : ''}`);
-      }
-
-      function addManualAddress(){ if(!currentTerritory){ showToast('⚠️ Abra um território antes'); return; } const val = (document.getElementById('manualAddress').value||'').trim(); if(!val){ showToast('⚠️ Digite o endereço'); return; } const territory = state.territories[currentTerritory]; const address = { id: generateId(), type:'house', logradouro: val, numero:'S/N', cep: territory.cep, bairro:'Monte Castelo', cidade:'Fortaleza', uf:'CE' }; territory.addresses.push(address); persist(); document.getElementById('manualAddress').value=''; openTerritory(currentTerritory); showToast('✅ Endereço adicionado'); }
-
-      function removeAddress(addressId){
-        const territory = state.territories[currentTerritory];
-        const address = territory.addresses.find(a=>a.id===addressId);
-        if(!address) return;
-        if(!confirm(`🗑️ Remover "${address.logradouro}"?\n\nEsta ação não pode ser desfeita.`)) return;
-        territory.addresses = territory.addresses.filter(a=>a.id !== addressId);
-        if(address.type === 'building') Object.keys(state.apartmentNotes).forEach(k=>{ if(k.startsWith(`${currentTerritory}_${addressId}_`)) delete state.apartmentNotes[k]; });
-        else delete state.addressNotes[`${currentTerritory}_${addressId}`];
-        persist();
-        openTerritory(currentTerritory);
-        showToast('🗑️ Endereço removido');
-      }
-
-      // Edifícios e apartamentos
-      function openBuildingView(buildingId){
-        const territory = state.territories[currentTerritory];
-        const building = territory.addresses.find(a=>a.id===buildingId);
-        if(!building) return;
-        currentBuilding = buildingId;
-        if(building.blocks.length > 1){
-          const selector = document.getElementById('blockSelector');
-          selector.innerHTML = building.blocks.map(b=>`<button class="block-btn" type="button" onclick="selectBlock('${b}')">Bloco ${escapeHtml(b)}</button>`).join('');
-          openModal('blockModal');
-        } else selectBlock(building.blocks[0]);
-      }
-
-      function selectBlock(block){
-        currentBlock = block; closeModal('blockModal');
-        const territory = state.territories[currentTerritory];
-        const building = territory.addresses.find(a=>a.id===currentBuilding);
-        const buildingLabel = building.name ? `${escapeHtml(building.name)} • ${escapeHtml(building.logradouro)}` : `${escapeHtml(building.logradouro)}`;
-        const portariaBadge = building.portariaEletronica ? '<span class="portaria-badge portaria-eletronica">🔐 Eletrônica</span>' : '<span class="portaria-badge portaria-normal">🚪 Normal</span>';
-        document.getElementById('apartmentListTitle').innerHTML = `🏢 ${buildingLabel}, Nº ${escapeHtml(building.numero)} - Bloco ${escapeHtml(block)} ${portariaBadge}`;
-        renderApartmentList(); openModal('apartmentListModal');
-      }
-
-      function renderApartmentList(){
-        const territory = state.territories[currentTerritory];
-        const building = territory.addresses.find(a=>a.id===currentBuilding);
-        const onlyNoted = document.getElementById('onlyNotedToggle').checked;
-        const apartments = Array.from({length: building.apartmentsPerBlock}, (_,i)=>i+1);
-        const selector = document.getElementById('apartmentSelector');
-        const apartmentsHtml = apartments.map(apt=>{
-          const aptNumber = building.blocks.length > 1 ? `${currentBlock}${String(apt).padStart(2,'0')}` : String(apt).padStart(3,'0');
-          const noteKey = `${currentTerritory}_${currentBuilding}_${currentBlock}_${aptNumber}`;
-          const hasNote = !!state.apartmentNotes[noteKey];
-          const noteData = state.apartmentNotes[noteKey];
-          if(onlyNoted && !hasNote) return '';
-          return `<button class="apartment-btn ${hasNote ? 'has-note' : ''}" type="button" onclick="openApartmentNote('${currentBlock}','${aptNumber}')" onmouseenter="showTooltip(this, buildApartmentTooltip(${noteData ? JSON.stringify(noteData).replace(/"/g,'&quot;') : 'null'}))" onmouseleave="hideTooltip()" onfocus="showTooltip(this, buildApartmentTooltip(${noteData ? JSON.stringify(noteData).replace(/"/g,'&quot;') : 'null'}),800)" onblur="hideTooltip()">${aptNumber}</button>`;
-        }).filter(Boolean).join('');
-        selector.innerHTML = apartmentsHtml || '<p style="text-align:center;padding:20px;color:var(--muted)">Nenhum apartamento com notas</p>';
-      }
-
-      function updateApartmentDisplay(){ renderApartmentList(); }
-      function closeApartmentListModal(){ closeModal('apartmentListModal'); }
-
-      function openApartmentNote(block, aptNumber){
-        currentBlock = block; currentApartment = aptNumber;
-        const territory = state.territories[currentTerritory];
-        const building = territory.addresses.find(a=>a.id===currentBuilding);
-        const noteKey = `${currentTerritory}_${currentBuilding}_${block}_${aptNumber}`;
-        const buildingLabel = building.name ? `${building.name} • ${building.logradouro}` : building.logradouro;
-        document.getElementById('apartmentModalTitle').textContent = `🏠 ${buildingLabel}, Nº ${building.numero} - Bloco ${block}, AP ${aptNumber}`;
-        const savedNote = state.apartmentNotes[noteKey];
-        const display = document.getElementById('existingNoteDisplay');
-        const deleteBtn = document.getElementById('deleteApartmentNoteBtn');
-        if(savedNote){
-          document.getElementById('apartmentNotes').value = savedNote.notes || '';
-          document.getElementById('apartmentStatus').value = savedNote.status || '';
-          document.getElementById('apartmentDia').value = savedNote.dia || '';
-          const statusLabels = {'nao-visitado':'📘 Não Visitado','ausente':'🚪 Ausente','conversado':'💬 Conversado','carta':'✉️ Deixou Carta','folheto':'📄 Deixou Folheto','recusou':'🚫 Recusou','estudo':'📚 Estudo Marcado'};
-          display.style.display = 'block';
-          display.innerHTML = `${savedNote.dia ? `<div style="margin-bottom:8px"><strong>📅 Dia:</strong> ${new Date(savedNote.dia).toLocaleDateString('pt-BR')}</div>` : ''}${savedNote.status ? `<div style="margin-bottom:8px"><strong>📌 Status:</strong> <span class="status-badge status-${savedNote.status}">${statusLabels[savedNote.status] || savedNote.status}</span></div>` : ''}${savedNote.notes ? `<div style="margin-bottom:8px"><strong>📝 Observações:</strong><div style="margin-top:6px;white-space:pre-wrap">${escapeHtml(savedNote.notes)}</div></div>` : ''}${savedNote.updatedAt ? `<div style="font-size:.85rem;color:var(--muted);margin-top:8px">Última atualização: ${new Date(savedNote.updatedAt).toLocaleString('pt-BR')}</div>` : ''}`;
-          deleteBtn.style.display = 'inline-flex';
-        } else {
-          document.getElementById('apartmentNotes').value=''; document.getElementById('apartmentStatus').value=''; document.getElementById('apartmentDia').value=''; display.style.display='none'; deleteBtn.style.display='none';
-        }
-        openModal('apartmentModal');
-      }
-
-      function saveApartmentNote(){
-        const notes = (document.getElementById('apartmentNotes').value||'').trim();
-        const status = document.getElementById('apartmentStatus').value;
-        const dia = document.getElementById('apartmentDia').value;
-        const noteKey = `${currentTerritory}_${currentBuilding}_${currentBlock}_${currentApartment}`;
-        if(!notes && !status && !dia){
-          if(confirm('⚠️ Nenhuma informação preenchida.\n\nDeseja remover os dados salvos?')){ delete state.apartmentNotes[noteKey]; persist(false,false); closeModal('apartmentModal'); renderApartmentList(); showToast('🗑️ Dados removidos'); }
-          return;
-        }
-        state.apartmentNotes[noteKey] = { notes, status, dia, updatedAt: new Date().toISOString() };
-        persist(false);
-        closeModal('apartmentModal');
-        renderApartmentList();
-        showToast('✅ Observação salva');
-      }
-
-      function deleteApartmentNote(){
-        if(!confirm('🗑️ Apagar todas as informações deste apartamento?')) return;
-        const noteKey = `${currentTerritory}_${currentBuilding}_${currentBlock}_${currentApartment}`;
-        delete state.apartmentNotes[noteKey];
-        persist(false);
-        closeModal('apartmentModal');
-        renderApartmentList();
-        showToast('🗑️ Nota apagada');
-      }
-
-      function resetAllApartmentStatus(){
-        if(!confirm('🔄 Resetar status de TODOS os apartamentos deste bloco?\n\nEsta ação não pode ser desfeita.')) return;
-        const territory = state.territories[currentTerritory];
-        const building = territory.addresses.find(a=>a.id===currentBuilding);
-        const apartments = Array.from({length: building.apartmentsPerBlock}, (_,i)=>i+1);
-        apartments.forEach(apt=>{
-          const aptNumber = building.blocks.length > 1 ? `${currentBlock}${String(apt).padStart(2,'0')}` : String(apt).padStart(3,'0');
-          const noteKey = `${currentTerritory}_${currentBuilding}_${currentBlock}_${aptNumber}`;
-          delete state.apartmentNotes[noteKey];
-        });
-        persist();
-        renderApartmentList();
-        showToast('🔄 Status resetado');
-      }
-
-      function bulkMarkApartments(){
-        const status = prompt('📌 Marcar todos como:\n\n1 = Não Visitado\n2 = Ausente\n3 = Conversado\n4 = Carta\n5 = Folheto\n6 = Recusou\n7 = Estudo\n\nDigite o número:');
-        const statusMap = {'1':'nao-visitado','2':'ausente','3':'conversado','4':'carta','5':'folheto','6':'recusou','7':'estudo'};
-        const selectedStatus = statusMap[status];
-        if(!selectedStatus){ showToast('❌ Opção inválida'); return; }
-        const territory = state.territories[currentTerritory];
-        const building = territory.addresses.find(a=>a.id===currentBuilding);
-        const apartments = Array.from({length: building.apartmentsPerBlock}, (_,i)=>i+1);
-        apartments.forEach(apt=>{
-          const aptNumber = building.blocks.length > 1 ? `${currentBlock}${String(apt).padStart(2,'0')}` : String(apt).padStart(3,'0');
-          const noteKey = `${currentTerritory}_${currentBuilding}_${currentBlock}_${aptNumber}`;
-          if(!state.apartmentNotes[noteKey]) state.apartmentNotes[noteKey] = {};
-          state.apartmentNotes[noteKey].status = selectedStatus;
-          state.apartmentNotes[noteKey].updatedAt = new Date().toISOString();
-        });
-        persist();
-        renderApartmentList();
-        showToast('✅ Todos marcados');
-      }
-
-      // ENDEREÇOS (CASAS)
-      function openAddressDetails(addressId){
-        currentAddress = addressId;
-        const territory = state.territories[currentTerritory];
-        const address = territory.addresses.find(a=>a.id===addressId);
-        if(!address) return;
-        const noteKey = `${currentTerritory}_${addressId}`;
-        const savedNote = state.addressNotes[noteKey];
-        document.getElementById('addressInfoDisplay').innerHTML = `<strong>${escapeHtml(address.logradouro)}, Nº ${escapeHtml(address.numero)}</strong><div style="color:var(--muted);margin-top:4px">${address.cep} • ${address.bairro}</div>`;
-        const deleteBtn = document.getElementById('deleteAddressNoteBtn');
-        if(savedNote){ document.getElementById('addressStatusSelect').value = savedNote.status || ''; document.getElementById('addressDia').value = savedNote.dia || ''; document.getElementById('addressObs').value = savedNote.obs || ''; deleteBtn.style.display = 'inline-flex'; }
-        else { document.getElementById('addressStatusSelect').value=''; document.getElementById('addressDia').value=''; document.getElementById('addressObs').value=''; deleteBtn.style.display='none'; }
-        openModal('addressDetailsModal');
-      }
-
-      function saveAddressDetails(){
-        const status = document.getElementById('addressStatusSelect').value;
-        const dia = document.getElementById('addressDia').value;
-        const obs = (document.getElementById('addressObs').value||'').trim();
-        const noteKey = `${currentTerritory}_${currentAddress}`;
-        if(!status && !dia && !obs){
-          if(confirm('⚠️ Nenhuma informação preenchida.\n\nDeseja remover os dados salvos?')){ delete state.addressNotes[noteKey]; persist(); closeModal('addressDetailsModal'); openTerritory(currentTerritory); showToast('🗑️ Dados removidos'); }
-          return;
-        }
-        state.addressNotes[noteKey] = { status, dia, obs, updatedAt: new Date().toISOString() };
-        persist();
-        closeModal('addressDetailsModal');
-        openTerritory(currentTerritory);
-        showToast('✅ Detalhes salvos');
-      }
-
-      function deleteAddressNote(){
-        if(!confirm('🗑️ Apagar todas as informações deste endereço?')) return;
-        const noteKey = `${currentTerritory}_${currentAddress}`;
-        delete state.addressNotes[noteKey];
-        persist();
-        closeModal('addressDetailsModal');
-        openTerritory(currentTerritory);
-        showToast('🗑️ Nota apagada');
-      }
-
-      // EXPORT / IMPORT / PDF
-      function exportData(){
-        const data = { territories: state.territories, apartmentNotes: state.apartmentNotes, addressNotes: state.addressNotes, isolatedTerritory: state.isolatedTerritory, exportedAt: new Date().toISOString(), version: '11.0' };
-        const blob = new Blob([JSON.stringify(data,null,2)], { type:'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a'); a.href = url; a.download = `territorios_${new Date().toISOString().slice(0,10)}.json`; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url); showToast('📤 Exportação iniciada');
-      }
-
-      function exportTerritoryPDF(){
-        if(!window.jspdf || !window.jspdf.jsPDF){ showToast('⚠️ Biblioteca PDF não carregada'); return; }
-        const { jsPDF } = window.jspdf; const doc = new jsPDF(); const t = state.territories[currentTerritory];
-        doc.setFontSize(16); doc.text(`Territorio ${t.numero}: ${t.nome}`, 20, 20);
-        doc.setFontSize(12); doc.text(`CEP: ${t.cep}`, 20, 30); doc.text(`Dias Trabalhados: ${t.diasTrabalhados.length}`, 20, 40); doc.text(`Enderecos: ${t.addresses.length}`, 20, 50);
-        doc.save(`territorio_${t.numero}_${t.nome.replace(/[^a-z0-9]/gi,'_')}.pdf`);
-        showToast('📄 PDF gerado');
-      }
-
-      function copySummaryToClipboard(){
-        const text = buildSummaryText();
-        if(navigator.clipboard){ navigator.clipboard.writeText(text).then(()=>showToast('✅ Resumo copiado')); }
-        else {
-          const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select();
-          try{ document.execCommand('copy'); showToast('✅ Resumo copiado'); } catch(e){ showToast('❌ Falha ao copiar'); }
-          ta.remove();
-        }
-      }
-
-      function shareData(){ const text = buildSummaryText(); const url = `https://wa.me/?text=${encodeURIComponent(text)}`; window.open(url, '_blank'); }
-
-      function buildSummaryText(){
-        const territories = Object.values(state.territories || {});
-        const totalAddresses = territories.reduce((s,t)=>s+(t.addresses?.length||0),0);
-        const totalBuildings = territories.reduce((s,t)=>s+(t.addresses?.filter(a=>a.type==='building').length||0),0);
-        const totalApartments = territories.reduce((s,t)=>s+(t.addresses?.filter(a=>a.type==='building').reduce((sum,b)=>sum+(b.totalApartments||0),0)||0),0);
-        const totalDias = territories.reduce((s,t)=>s+(t.diasTrabalhados?.length||0),0);
-        let text = `🗺️ SISTEMA DE TERRITÓRIOS - MONTE CASTELO/CENTRO\nFORTALEZA - CE\n\n📊 RESUMO GERAL:\n━━━━━━━━━━━━━━━\n`;
-        text += `• Territórios: ${territories.length}\n• Endereços: ${totalAddresses}\n• Prédios: ${totalBuildings}\n• Apartamentos: ${totalApartments}\n• Dias Trabalhados: ${totalDias}\n\n━━━━━━━━━━━━━━━\n\n`;
-        territories.forEach(t=>{
-          if(t.addresses && t.addresses.length){
-            text += `📍 TERRITÓRIO ${t.numero}: ${t.nome}${t.fixado ? ' 📌' : ''}\nCEP Base: ${t.cep}\nDias: ${t.diasTrabalhados?.length || 0} • Endereços: ${t.addresses.length}\n\n`;
-          }
-        });
-        text += `━━━━━━━━━━━━━━━\nExportado em: ${new Date().toLocaleString('pt-BR')}`;
-        return text;
-      }
-
-      // IMPORT/EXPORT FILES
-      function handleFileImport(e){
-        const f = e.target.files && e.target.files[0];
-        if(!f) return;
-        if(f.size > MAX_IMPORT_BYTES){ showToast('❌ Arquivo muito grande. Limite: 1024 MB'); e.target.value = ''; return; }
-        const reader = new FileReader();
-        reader.onload = ()=>{
-          try{
-            const parsed = JSON.parse(reader.result);
-            const choice = prompt('📥 Importar dados?\n\nDigite "substituir" para substituir tudo\nou "mesclar" para adicionar/mesclar:');
-            if(!choice){ showToast('Importação cancelada'); return; }
-            if(choice.toLowerCase() === 'substituir'){
-              if(!confirm('⚠️ Substituir todos os dados?\n\nEsta ação NÃO pode ser desfeita.')) return;
-              loadState(parsed); persist(false); renderTerritories(); renderOverview(); showToast('✅ Dados substituídos');
-            } else if(choice.toLowerCase() === 'mesclar'){
-              const incomingTerritories = parsed.territories || {};
-              Object.keys(incomingTerritories).forEach(k=>{
-                if(!state.territories[k]) state.territories[k] = incomingTerritories[k];
-                else {
-                  const src = incomingTerritories[k], dest = state.territories[k];
-                  dest.addresses = dest.addresses || [];
-                  (src.addresses || []).forEach(a=>{ if(!dest.addresses.find(x=>x.id===a.id)) dest.addresses.push(a); });
-                  dest.diasTrabalhados = dest.diasTrabalhados || [];
-                  (src.diasTrabalhados || []).forEach(d=>{ if(!dest.diasTrabalhados.find(x=>x.data===d.data && x.ruas===d.ruas)) dest.diasTrabalhados.push(d); });
-                }
-              });
-              Object.assign(state.apartmentNotes, parsed.apartmentNotes || {});
-              Object.assign(state.addressNotes, parsed.addressNotes || {});
-              persist(); renderTerritories(); renderOverview(); showToast('✅ Dados mesclados');
-            } else showToast('Importação cancelada');
-          } catch(err){ console.error(err); showToast('❌ Arquivo inválido'); }
-        };
-        reader.readAsText(f); e.target.value = '';
-      }
-
-      function importDemoJson(){ if(!confirm('📥 Inserir dados de exemplo (.json)? Isso irá mesclar com os dados atuais.')) return; Object.keys(demoJson.territories||{}).forEach(k=>{ if(!state.territories[k]) state.territories[k] = demoJson.territories[k]; else { const src = demoJson.territories[k], dest = state.territories[k]; dest.addresses = dest.addresses || []; src.addresses = src.addresses || []; src.addresses.forEach(a=>{ if(!dest.addresses.find(x=>x.id===a.id)) dest.addresses.push(a); }); dest.diasTrabalhados = dest.diasTrabalhados || []; src.diasTrabalhados = src.diasTrabalhados || []; src.diasTrabalhados.forEach(d=>{ if(!dest.diasTrabalhados.find(x=>x.data===d.data && x.ruas===d.ruas)) dest.diasTrabalhados.push(d); }); } }); Object.assign(state.apartmentNotes, demoJson.apartmentNotes || {}); Object.assign(state.addressNotes, demoJson.addressNotes || {}); persist(); renderTerritories(); renderOverview(); showToast('✅ Demo JSON inserido'); }
-
-      // MODAL utilities
-      function openModal(modalId){
-        const modal = document.getElementById(modalId); if(!modal) return;
-        modal.classList.add('show'); modal.setAttribute('aria-hidden','false');
-        const focusable = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
-        if(focusable.length) focusable[0].focus();
-        const handleEscape = (e)=>{ if(e.key === 'Escape') closeModal(modalId); };
-        modal._escapeHandler = handleEscape; document.addEventListener('keydown', handleEscape);
-        const handleClickOutside = (e)=>{ if(e.target === modal) closeModal(modalId); };
-        modal._clickHandler = handleClickOutside; modal.addEventListener('click', handleClickOutside);
-      }
-
-      function closeModal(modalId){
-        const modal = document.getElementById(modalId); if(!modal) return;
-        modal.classList.remove('show'); modal.setAttribute('aria-hidden','true');
-        if(modal._escapeHandler){ document.removeEventListener('keydown', modal._escapeHandler); delete modal._escapeHandler; }
-        if(modal._clickHandler){ modal.removeEventListener('click', modal._clickHandler); delete modal._clickHandler; }
-      }
-
-      // SIDEBAR behavior
-      function toggleSidebar(){
-        const sidebar = document.getElementById('sidebar'), overlay = document.getElementById('sidebarOverlay'), layout = document.getElementById('layoutRoot');
-        const isMobile = window.innerWidth <= 768;
-        sidebar.classList.toggle('collapsed');
-        if(isMobile) overlay.classList.toggle('show');
-        else layout.classList.toggle('sidebar-collapsed');
-      }
-
-      window.addEventListener('resize', ()=>{
-        const sidebar = document.getElementById('sidebar'), overlay = document.getElementById('sidebarOverlay'), layout = document.getElementById('layoutRoot');
-        if(window.innerWidth > 768){ overlay.classList.remove('show'); sidebar.classList.remove('collapsed'); layout.classList.remove('sidebar-collapsed'); }
-        else { layout.classList.remove('sidebar-collapsed'); sidebar.classList.add('collapsed'); }
-      });
-
-      // DOM events & init
-      function init(){
-        loadState();
-        renderTerritories();
-        renderOverview();
-        const savedTheme = localStorage.getItem('theme') || 'light';
-        applyTheme(savedTheme);
-
-        document.getElementById('undoBtn').addEventListener('click', undo);
-        document.getElementById('redoBtn').addEventListener('click', redo);
-        document.getElementById('saveBtn').addEventListener('click', ()=>persist());
-        document.getElementById('loadBtn').addEventListener('click', ()=>{ loadState(); renderTerritories(); renderOverview(); showToast('✅ Dados recarregados'); });
-        document.getElementById('exportBtn').addEventListener('click', exportData);
-        document.getElementById('copySummaryBtn').addEventListener('click', copySummaryToClipboard);
-        document.getElementById('shareBtn').addEventListener('click', shareData);
-        document.getElementById('importBtn').addEventListener('click', ()=>document.getElementById('fileInput').click());
-        document.getElementById('fileInput').addEventListener('change', handleFileImport);
-        document.getElementById('themeBtn').addEventListener('click', toggleTheme);
-        document.getElementById('newTerritoryBtn').addEventListener('click', ()=>openModal('newTerritoryModal'));
-        document.getElementById('createTerritoryBtn').addEventListener('click', createNewTerritory);
-        document.getElementById('territorySearch').addEventListener('input', renderTerritories);
-        document.getElementById('clearSearch').addEventListener('click', ()=>{ document.getElementById('territorySearch').value=''; renderTerritories(); document.getElementById('territorySearch').focus(); });
-        document.getElementById('importDemoBtn').addEventListener('click', importDemoJson);
-
-        document.getElementById('sidebarToggle').addEventListener('click', toggleSidebar);
-        document.getElementById('sidebarOverlay').addEventListener('click', ()=>{
-          document.getElementById('sidebar').classList.add('collapsed');
-          document.getElementById('sidebarOverlay').classList.remove('show');
-        });
-
-        // modal close by attribute
-        document.querySelectorAll('.close-modal, [data-close]').forEach(btn=>{
-          btn.addEventListener('click', (e)=>{
-            const id = btn.getAttribute('data-close') || btn.closest('.modal')?.id;
-            if(id) closeModal(id);
-          });
-        });
-
-        // dias modal save
-        document.getElementById('saveDiaBtn').addEventListener('click', saveDia);
-
-        // apartment note save/delete
-        document.getElementById('saveApartmentNoteBtn').addEventListener('click', saveApartmentNote);
-        document.getElementById('deleteApartmentNoteBtn').addEventListener('click', deleteApartmentNote);
-
-        // apartment list controls
-        document.getElementById('onlyNotedToggle').addEventListener('change', updateApartmentDisplay);
-        document.getElementById('resetStatusBtn').addEventListener('click', resetAllApartmentStatus);
-        document.getElementById('bulkMarkBtn').addEventListener('click', bulkMarkApartments);
-
-        // address details
-        document.getElementById('saveAddressDetailsBtn').addEventListener('click', saveAddressDetails);
-        document.getElementById('deleteAddressNoteBtn').addEventListener('click', deleteAddressNote);
-
-        // import file
-        document.getElementById('fileInput').addEventListener('change', handleFileImport);
-
-        // keyboard shortcuts
-        document.addEventListener('keydown', (e)=>{
-          if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's'){ e.preventDefault(); persist(); }
-          if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'e'){ e.preventDefault(); exportData(); }
-          if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z'){ e.preventDefault(); undo(); }
-          if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y'){ e.preventDefault(); redo(); }
-          if(e.key.toLowerCase() === 't' && !e.ctrlKey && !e.metaKey && !['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)){ toggleTheme(); }
-        });
-
-        showToast('✨ Sistema pronto para uso', 2000);
-
-        // auto-collapse sidebar on mobile start
-        if(window.innerWidth <= 768){
-          document.getElementById('sidebar').classList.add('collapsed');
-        }
-
-        if(!Object.keys(state.territories || {}).length){ state.territories = deepClone(initialTerritories); persist(false); }
-      }
-
-      init();
-      // rastreia última posição do ponteiro/toque visível ao usuário
-  window.__lastPointer = { x: window.innerWidth/2, y: window.innerHeight/2, ts: Date.now() };
-  function updatePointer(e){
-    if(e.touches && e.touches[0]){ window.__lastPointer.x = e.touches[0].clientX; window.__lastPointer.y = e.touches[0].clientY; }
-    else { window.__lastPointer.x = e.clientX; window.__lastPointer.y = e.clientY; }
-    window.__lastPointer.ts = Date.now();
-  }
-  window.addEventListener('pointermove', updatePointer, {passive:true});
-  window.addEventListener('mousemove', updatePointer, {passive:true});
-  window.addEventListener('touchstart', updatePointer, {passive:true});
-  window.addEventListener('touchmove', updatePointer, {passive:true});
-
-  // aguarda a definição da função original showTooltip para envolver e ajustar a posição
-  (function wrapWhenReady(){
-    if(typeof window.showTooltip !== 'function'){
-      return setTimeout(wrapWhenReady, 50);
-    }
-    const originalShow = window.showTooltip;
-    window.showTooltip = function(element, content, delay = 350){
-      // chama comportamento original (posicionamento baseado no elemento)
-      originalShow(element, content, delay);
-
-      // reposiciona o tooltip para a coordenada do último ponteiro/toque do usuário,
-      // respeitando margens para não sair da viewport
-      setTimeout(()=>{
-        try{
-          const tt = document.getElementById('tooltipContainer');
-          if(!tt || !tt.classList.contains('show')) return;
-          const padding = 10;
-          const lp = window.__lastPointer || { x: window.innerWidth/2, y: window.innerHeight/2 };
-          const rect = tt.getBoundingClientRect();
-          // preferir aparecer abaixo do toque/ponteiro, senão acima
-          let left = lp.x - (rect.width / 2);
-          let top = lp.y + 18;
-          if(top + rect.height > window.innerHeight - padding) top = lp.y - rect.height - 18;
-          if(left < padding) left = padding;
-          if(left + rect.width > window.innerWidth - padding) left = window.innerWidth - rect.width - padding;
-          if(top < padding) top = padding;
-          tt.style.left = Math.round(left) + 'px';
-          tt.style.top = Math.round(top) + 'px';
-          // marca posição para testes/estados
-          tt.setAttribute('data-position','pointer');
-        }catch(e){
-          // silencioso
-        }
-      }, Math.max(40, delay - 40));
-    };
-  })();
-    </script>
-    </body>
+        <div class="territory-list" id="territoriesList"></div>
+      </aside>
+
+      <main id="mainContent" class="content"></main>
+    </div>
+  </div>
+
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <div id="tooltipContainer" class="tooltip"></div>
+  <div id="toast" class="toast"></div>
+
+  <!-- Modal Novo Território -->
+  <div id="newTerritoryModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>➕ Novo Território</h2>
+        <button class="close-modal" data-close="newTerritoryModal">×</button>
+      </div>
+      <div class="form-group">
+        <label>Número</label>
+        <input id="newTerritoryNumber" type="number" placeholder="Ex: 25">
+      </div>
+      <div class="form-group">
+        <label>Nome</label>
+        <input id="newTerritoryName" type="text" placeholder="Ex: Rua Principal">
+      </div>
+      <div class="form-group">
+        <label>CEP</label>
+        <input id="newTerritoryCEP" type="text" placeholder="60325-000" maxlength="9">
+      </div>
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px">
+        <button class="btn btn-secondary" data-close="newTerritoryModal">Cancelar</button>
+        <button id="createTerritoryBtn" class="btn btn-success">Criar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Dias -->
+  <div id="diasModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>📅 Dia Trabalhado</h2>
+        <button class="close-modal" data-close="diasModal">×</button>
+      </div>
+      <div class="form-group">
+        <label>Data</label>
+        <input type="date" id="diaDate" required>
+      </div>
+      <div class="form-group">
+        <label>Ruas/Quadras</label>
+        <textarea id="diaRuas" placeholder="Ex: Rua A, Quadra 10"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Observações</label>
+        <textarea id="diaObs" placeholder="Ex: Manhã chuvosa"></textarea>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px">
+        <button class="btn btn-secondary" data-close="diasModal">Cancelar</button>
+        <button class="btn btn-success" id="saveDiaBtn">💾 Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Blocos -->
+  <div id="blockModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>🏢 Selecionar Bloco</h2>
+        <button class="close-modal" data-close="blockModal">×</button>
+      </div>
+      <div class="block-selector" id="blockSelector"></div>
+    </div>
+  </div>
+
+  <!-- Modal Apartamentos -->
+  <div id="apartmentListModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="apartmentListTitle">🏢 Apartamentos</h2>
+        <button class="close-modal" data-close="apartmentListModal">×</button>
+      </div>
+      <div style="margin-bottom:16px">
+        <label><input id="onlyNotedToggle" type="checkbox"> Mostrar só com Notas</label>
+      </div>
+      <div class="apartment-selector" id="apartmentSelector"></div>
+    </div>
+  </div>
+
+  <!-- Modal Apartamento -->
+  <div id="apartmentModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="apartmentModalTitle">🏠 Apartamento</h2>
+        <button class="close-modal" data-close="apartmentModal">×</button>
+      </div>
+      <div class="form-group">
+        <label>📅 Data</label>
+        <input type="date" id="apartmentDia">
+      </div>
+      <div class="form-group">
+        <label>📋 Observações</label>
+        <textarea id="apartmentNotes" placeholder="Ex: Deixou carta"></textarea>
+      </div>
+      <div class="form-group">
+        <label>📌 Status</label>
+        <select id="apartmentStatus">
+          <option value="">Selecione...</option>
+          <option value="nao-visitado">📘 Não Visitado</option>
+          <option value="ausente">🚪 Ausente</option>
+          <option value="conversado">💬 Conversado</option>
+          <option value="carta">✉️ Deixou Carta</option>
+          <option value="folheto">📄 Deixou Folheto</option>
+          <option value="recusou">🚫 Recusou</option>
+          <option value="estudo">📚 Estudo</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
+        <button class="btn btn-secondary" data-close="apartmentModal">Cancelar</button>
+        <button id="deleteApartmentNoteBtn" class="btn btn-danger" style="display:none">🗑️</button>
+        <button class="btn btn-success" id="saveApartmentNoteBtn">💾 Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Endereço -->
+  <div id="addressDetailsModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>🏠 Detalhes</h2>
+        <button class="close-modal" data-close="addressDetailsModal">×</button>
+      </div>
+      <div id="addressInfoDisplay" style="margin-bottom:16px"></div>
+      <div class="form-group">
+        <label>📌 Status</label>
+        <select id="addressStatusSelect">
+          <option value="">Selecione...</option>
+          <option value="nao-visitado">📘 Não Visitado</option>
+          <option value="ausente">🚪 Ausente</option>
+          <option value="conversado">💬 Conversado</option>
+          <option value="carta">✉️ Carta</option>
+          <option value="folheto">📄 Folheto</option>
+          <option value="recusou">🚫 Recusou</option>
+          <option value="estudo">📚 Estudo</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>📅 Data</label>
+        <input id="addressDia" type="date">
+      </div>
+      <div class="form-group">
+        <label>Observações</label>
+        <textarea id="addressObs" placeholder="Detalhes..."></textarea>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
+        <button class="btn btn-secondary" data-close="addressDetailsModal">Cancelar</button>
+        <button id="deleteAddressNoteBtn" class="btn btn-danger" style="display:none">🗑️</button>
+        <button class="btn btn-success" id="saveAddressDetailsBtn">💾 Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Adicionar Casa -->
+  <div id="addHouseModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>🏠 Adicionar Casa</h2>
+        <button class="close-modal" data-close="addHouseModal">×</button>
+      </div>
+      <div class="form-group">
+        <label>CEP</label>
+        <input id="houseCEP" type="text" placeholder="60325-000" maxlength="9">
+        <button class="btn btn-primary" onclick="searchHouseCEP()" style="margin-top:8px">🔍 Buscar</button>
+      </div>
+      <div class="form-group">
+        <label>Logradouro</label>
+        <input id="houseLogradouro" type="text" placeholder="Rua, Avenida...">
+      </div>
+      <div class="form-group">
+        <label>Número</label>
+        <input id="houseNumero" type="text" placeholder="123">
+      </div>
+      <div class="form-group">
+        <label>Bairro</label>
+        <input id="houseBairro" type="text" placeholder="Monte Castelo">
+      </div>
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px">
+        <button class="btn btn-secondary" data-close="addHouseModal">Cancelar</button>
+        <button id="saveHouseBtn" class="btn btn-success">💾 Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Adicionar Prédio -->
+  <div id="addBuildingModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>🏢 Adicionar Prédio</h2>
+        <button class="close-modal" data-close="addBuildingModal">×</button>
+      </div>
+      <div class="form-group">
+        <label>CEP</label>
+        <input id="buildingCEP" type="text" placeholder="60325-000" maxlength="9">
+        <button class="btn btn-primary" onclick="searchBuildingCEP()" style="margin-top:8px">🔍 Buscar</button>
+      </div>
+      <div class="form-group">
+        <label>Logradouro</label>
+        <input id="buildingLogradouro" type="text" placeholder="Rua, Avenida...">
+      </div>
+      <div class="form-group">
+        <label>Número</label>
+        <input id="buildingNumero" type="text" placeholder="123">
+      </div>
+      <div class="form-group">
+        <label>Nome do Prédio</label>
+        <input id="buildingName" type="text" placeholder="Edifício...">
+      </div>
+      <div class="form-group">
+        <label>Bairro</label>
+        <input id="buildingBairro" type="text" placeholder="Monte Castelo">
+      </div>
+      <div class="form-group">
+        <label>Tipo de Portaria</label>
+        <select id="buildingPortaria">
+          <option value="porteiro">👨💼 Porteiro</option>
+          <option value="eletronica">🔐 Eletrônica</option>
+          <option value="interfone">📞 Interfone</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Blocos (ex: A,B,C ou 1,2,3)</label>
+        <input id="buildingBlocks" type="text" placeholder="A,B,C">
+      </div>
+      <div id="blockApartmentsContainer"></div>
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px">
+        <button class="btn btn-secondary" data-close="addBuildingModal">Cancelar</button>
+        <button id="saveBuildingBtn" class="btn btn-success">💾 Salvar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app_full.js"></script>
+</body>
 </html>
