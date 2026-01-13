@@ -1,234 +1,194 @@
-# 🏢 Sistema de Territórios - Monte Castelo / Centro
+# TarginoTur - Site Moderno
 
-Sistema completo para gerenciamento de territórios de pregação com suporte a casas, prédios e apartamentos individualizados.
+Site moderno e responsivo para a empresa TarginoTur, especializada em passeios e transfers em Fortaleza/CE.
 
-## 📁 Arquivos Principais
+## 🚀 Características
 
-- **index_complete.html** - HTML principal (use este!)
-- **app_full.js** - Lógica JavaScript completa
-- **styles.css** - Estilos CSS responsivos
+- **Design Moderno**: Interface limpa e profissional
+- **Tema Claro/Escuro**: Alternância entre temas com persistência
+- **Responsivo**: Adaptado para todos os dispositivos
+- **Performance Otimizada**: Carregamento rápido e eficiente
+- **SEO Friendly**: Otimizado para mecanismos de busca
+- **Segurança**: Headers de segurança e proteções implementadas
 
-## ✨ Funcionalidades Completas
+## 🛠️ Tecnologias Utilizadas
 
-### 🗺️ Gerenciamento de Territórios
-- ✅ Criar, editar e deletar territórios
-- ✅ Listar e buscar territórios
-- ✅ Fixar/desafixar territórios importantes
-- ✅ 8 territórios pré-configurados com links do Google Maps
-- ✅ Cores personalizadas por território
-- ✅ Visualização detalhada com estatísticas
+- **HTML5**: Estrutura semântica
+- **CSS3**: Estilização moderna com variáveis CSS
+- **JavaScript**: Funcionalidades interativas
+- **PHP**: Backend dinâmico
+- **MySQL**: Banco de dados (opcional)
 
-### 📅 Dias Trabalhados
-- ✅ Adicionar dias com data automática
-- ✅ Registrar ruas/quadras trabalhadas
-- ✅ Adicionar observações detalhadas
-- ✅ Deletar dias registrados
-- ✅ Ordenação automática por data
-- ✅ Tooltips com informações completas
+## 📁 Estrutura do Projeto
 
-### 🏠 Gerenciamento de Endereços
+```
+site_targino/
+├── assets/
+│   ├── css/
+│   │   └── style.css
+│   └── js/
+│       └── script.js
+├── banner/
+│   ├── banner01.jpg
+│   ├── banner02.jpg
+│   └── banner03.jpg
+├── pacotes/
+│   ├── 123_1.jpg
+│   ├── 124_1.jpg
+│   └── ... (imagens dos pacotes)
+├── images/
+│   └── cartoes2.png
+├── config.php
+├── index.php
+├── passeios.php
+├── transfers.php
+├── .htaccess
+└── README.md
+```
 
-#### Casas
-- ✅ Adicionar casas com CEP automático
-- ✅ Busca de endereço via ViaCEP
-- ✅ Registrar status de visita
-- ✅ Adicionar observações e data
-- ✅ Link direto para Google Maps
+## 🔧 Instalação
 
-#### Prédios
-- ✅ Adicionar prédios com múltiplos blocos
-- ✅ Blocos individualizados (cada bloco com quantidade diferente de apartamentos)
-- ✅ 3 tipos de portaria: Porteiro, Eletrônica, Interfone
-- ✅ Busca de endereço via CEP
-- ✅ Link direto para Google Maps
+### Requisitos
+- Servidor web (Apache/Nginx)
+- PHP 7.4 ou superior
+- MySQL (opcional)
 
-### 🏢 Gerenciamento de Apartamentos
-- ✅ Visualização por bloco
-- ✅ Registro individual de cada apartamento
-- ✅ Status de visita (7 opções)
-- ✅ Observações detalhadas
-- ✅ Data de última visita
-- ✅ Filtro para mostrar apenas apartamentos com notas
-- ✅ Indicador visual de apartamentos visitados
-- ✅ Tooltips com informações completas
-- ✅ Edição múltipla permitida
+### Passos de Instalação
 
-### 💾 Sistema de Dados
-- ✅ Salvamento automático no LocalStorage
-- ✅ Histórico com 50 níveis (Desfazer/Refazer)
-- ✅ Exportar dados em JSON
-- ✅ Importar dados de backup
-- ✅ Copiar resumo para área de transferência
-- ✅ Compartilhar via WhatsApp
+1. **Clone ou baixe os arquivos** para o diretório do seu servidor web:
+   ```
+   c:\xampp\htdocs\site_targino\
+   ```
 
-### 🎨 Interface
-- ✅ Tema claro/escuro com persistência
-- ✅ Layout 100% responsivo (Desktop, Tablet, Mobile)
-- ✅ Tooltips informativos em todos elementos
-- ✅ Toast notifications para feedback
-- ✅ Modais funcionais e acessíveis
-- ✅ Labels nos botões (visíveis em mobile)
-- ✅ Animações suaves
+2. **Configure o banco de dados** (opcional):
+   - Edite o arquivo `config.php`
+   - Ajuste as credenciais do banco de dados
 
-## 🚀 Como Usar
+3. **Configurar imagens**:
+   - Adicione as imagens dos banners na pasta `banner/`
+   - Adicione as imagens dos pacotes na pasta `pacotes/`
+   - Adicione a imagem dos cartões na pasta `images/`
 
-1. Abra o arquivo `index_complete.html` no navegador
-2. O sistema carrega com 8 territórios pré-configurados
-3. Use os botões no header:
-   - **➕ Novo** - Criar território
-   - **💾 Salvar** - Salvar manualmente
-   - **📤 Exportar** - Baixar backup JSON
-   - **📥 Importar** - Restaurar backup
-   - **📋 Copiar** - Copiar resumo
-   - **📲 WhatsApp** - Compartilhar
-   - **🌙 Tema** - Alternar claro/escuro
-   - **↶ Desfazer** - Desfazer última ação
-   - **↷ Refazer** - Refazer ação
+4. **Configurar domínio** (para produção):
+   - Edite o arquivo `.htaccess`
+   - Substitua "seudominio.com" pelo seu domínio real
 
-## ⌨️ Atalhos de Teclado
+## 🎨 Funcionalidades
 
-- `Ctrl+Z` - Desfazer
-- `Ctrl+Y` ou `Ctrl+Shift+Z` - Refazer
-- `Ctrl+S` - Salvar
-- `Ctrl+E` - Exportar
+### Tema Claro/Escuro
+- Alternância automática entre temas
+- Persistência da preferência do usuário
+- Transições suaves
 
-## 📊 Status de Visita
+### Slider de Imagens
+- Rotação automática a cada 5 segundos
+- Controles manuais (setas e pontos)
+- Pausa ao passar o mouse
 
-- 📘 Não Visitado
-- 🚪 Ausente
-- 💬 Conversado
-- ✉️ Deixou Carta
-- 📄 Deixou Folheto
-- 🚫 Recusou
-- 📚 Estudo
+### Menu Responsivo
+- Menu hambúrguer para dispositivos móveis
+- Navegação suave entre seções
+- Fechamento automático ao clicar em links
 
-## 🏢 Tipos de Portaria
-
-- 👨💼 Porteiro (físico)
-- 🔐 Eletrônica (senha/cartão)
-- 📞 Interfone (chamada)
-
-## 🗺️ Territórios Pré-configurados
-
-1. SR
-2. Amaro Cavalcante
-3. Casa da ração
-4. Correios x Chico Alves
-5. Carneiro da Cunha
-6. Morro do Ouro
-7. Frangolândia
-8. Pdr Anchieta x Bezerra
-
-Todos com links diretos para Google Maps!
-
-## 💡 Recursos Avançados
-
-### Blocos Individualizados
-Cada bloco de um prédio pode ter quantidade diferente de apartamentos:
-- Bloco A: 12 apartamentos
-- Bloco B: 8 apartamentos
-- Bloco C: 16 apartamentos
-
-### Tooltips Informativos
-Passe o mouse sobre qualquer elemento para ver:
-- Territórios: dias, casas, prédios, apartamentos, CEP
-- Endereços: CEP, bairro, status, última visita
-- Apartamentos: status, data, observações
-- Blocos: total, visitados, não visitados
-- Dias: ruas/quadras, observações completas
-
-### Busca de CEP
-Integração com ViaCEP para preenchimento automático de:
-- Logradouro
-- Bairro
-- Cidade
-- UF
+### Animações
+- Animações ao scroll
+- Efeitos hover nos cards
+- Transições suaves
 
 ## 📱 Responsividade
 
-### Desktop (>1024px)
-- Labels ocultos nos botões
-- Sidebar fixa lateral
-- Grid de 2 colunas
+O site é totalmente responsivo e se adapta a:
+- Desktop (1200px+)
+- Tablet (768px - 1199px)
+- Mobile (até 767px)
 
-### Tablet (768-1024px)
-- Labels ocultos
-- Layout adaptado
+## 🔒 Segurança
 
-### Mobile (≤768px)
-- Labels visíveis em todos botões
-- Sidebar em menu hambúrguer
-- Botões em grid 2 colunas
-- Layout em 1 coluna
+### Headers de Segurança
+- X-Content-Type-Options
+- X-Frame-Options
+- X-XSS-Protection
+- Referrer-Policy
 
-### Mobile Pequeno (≤480px)
-- Botões em 1 coluna
-- Fonte e espaçamentos otimizados
+### Proteções Implementadas
+- Sanitização de inputs
+- Proteção contra hotlinking
+- Bloqueio de arquivos sensíveis
+- Validação de dados
 
-## 💾 Estrutura de Dados
+## ⚡ Performance
 
-```json
-{
-  "territories": {
-    "t1": {
-      "id": "t1",
-      "numero": 1,
-      "nome": "SR",
-      "cep": "60325-110",
-      "cor": "#48bb78",
-      "addresses": [],
-      "diasTrabalhados": [],
-      "fixado": false
-    }
-  },
-  "apartmentNotes": {
-    "t1_building1_A_01": {
-      "notes": "Conversou sobre...",
-      "status": "conversado",
-      "dia": "2024-01-15",
-      "updatedAt": "2024-01-15T10:30:00Z"
-    }
-  },
-  "addressNotes": {
-    "t1_house1": {
-      "status": "ausente",
-      "dia": "2024-01-15",
-      "obs": "Ninguém atendeu",
-      "updatedAt": "2024-01-15T10:30:00Z"
-    }
-  }
-}
-```
+### Otimizações
+- Compressão GZIP
+- Cache de arquivos estáticos
+- Lazy loading de imagens
+- Minificação de recursos
 
-## 🔧 Tecnologias
+### Métricas Esperadas
+- Tempo de carregamento: < 3 segundos
+- First Contentful Paint: < 1.5 segundos
+- Largest Contentful Paint: < 2.5 segundos
 
-- HTML5 semântico
-- CSS3 com variáveis e responsividade
-- JavaScript ES6+ modular
-- LocalStorage API
-- ViaCEP API
-- Google Maps API
+## 🌐 Compatibilidade
 
-## 🐛 Correções Recentes
+### Navegadores Suportados
+- Chrome 60+
+- Firefox 55+
+- Safari 12+
+- Edge 79+
 
-- ✅ Problema de fuso horário nas datas corrigido
-- ✅ Tooltips não bloqueiam mais cliques
-- ✅ Apartamentos podem ser editados múltiplas vezes
-- ✅ Salvamento automático silencioso
-- ✅ Event listeners ao invés de onclick inline
-- ✅ Formatação de data corrigida
+### Dispositivos
+- Desktop
+- Tablet
+- Smartphone
+- Smart TV
 
-## 📝 Notas Importantes
+## 📞 Contato e Suporte
 
-- Dados salvos automaticamente a cada ação
-- Histórico limitado a 50 níveis
-- Backup recomendado via Exportar
-- Funciona offline após primeiro carregamento
-- Compatível com Chrome, Firefox, Safari, Edge
+Para suporte técnico ou dúvidas sobre o site:
+
+- **Telefone**: (85) 98736-0977
+- **Email**: targinotur.fretamento@gmail.com
+- **WhatsApp**: https://api.whatsapp.com/send?phone=5585987360977
+
+## 🔄 Atualizações Futuras
+
+### Funcionalidades Planejadas
+- Sistema de reservas online
+- Integração com gateway de pagamento
+- Painel administrativo
+- Blog/notícias
+- Sistema de avaliações
+- Integração com redes sociais
+
+### Melhorias Técnicas
+- Service Worker para PWA
+- Otimização de imagens WebP
+- Implementação de CDN
+- Monitoramento de performance
+
+## 📄 Licença
+
+Este projeto foi desenvolvido especificamente para a TarginoTur. Todos os direitos reservados.
+
+## 🤝 Contribuição
+
+Para contribuir com melhorias:
+
+1. Faça um fork do projeto
+2. Crie uma branch para sua feature
+3. Commit suas mudanças
+4. Push para a branch
+5. Abra um Pull Request
+
+## 📊 Analytics
+
+Para monitorar o desempenho do site, recomenda-se a implementação de:
+- Google Analytics
+- Google Search Console
+- Hotjar ou similar para heatmaps
+- PageSpeed Insights para performance
 
 ---
 
-**Desenvolvido com ❤️ para facilitar o trabalho de pregação**
-
-**Versão:** 2.0 Completa  
-**Última atualização:** 22/12/2025
+**Desenvolvido com ❤️ para TarginoTur**
