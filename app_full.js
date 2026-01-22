@@ -458,6 +458,7 @@ const Address = {
       type: 'house',
       logradouro: addressData.logradouro,
       numero: addressData.numero || 'S/N',
+      quadra: addressData.quadra || '',
       cep: addressData.cep,
       bairro: addressData.bairro,
       cidade: addressData.cidade || 'Fortaleza',
@@ -483,13 +484,16 @@ const Address = {
       logradouro: buildingData.logradouro,
       numero: buildingData.numero || 'S/N',
       name: buildingData.name || '',
+      quadra: buildingData.quadra || '',
       cep: buildingData.cep,
       bairro: buildingData.bairro,
       cidade: buildingData.cidade || 'Fortaleza',
       uf: buildingData.uf || 'CE',
       blocks: blocks,
       totalApartments: totalApartments,
-      portariaType: buildingData.portariaType || 'porteiro'
+      portariaType: buildingData.portariaType || 'porteiro',
+      portaCarta: buildingData.portaCarta || false,
+      portaCartaTipo: buildingData.portaCartaTipo || 'coletivo'
     };
     
     if (!territory.addresses) territory.addresses = [];
@@ -852,28 +856,35 @@ const UI = {
           const isBuilding = addr.type === 'building';
           const hasNote = AppState.addressNotes[`${territory.id}_${addr.id}`];
           const portariaBadge = isBuilding ? `<span class="badge" style="background:var(--info);color:#fff;margin-left:8px">${PORTARIA_TYPES[addr.portariaType] || '🚪'}</span>` : '';
+          const portaCartaBadge = isBuilding && addr.portaCarta ? `<span class="badge" style="background:var(--success);color:#fff;margin-left:4px">${addr.portaCartaTipo === 'individual' ? '📬' : '📮'}</span>` : '';
+          
+          // Formatação do endereço com quadra
+          const enderecoCompleto = addr.quadra ? 
+            `${addr.quadra} ${addr.logradouro} • ${addr.name ? addr.name + ', ' : ''}Nº ${addr.numero}` :
+            `${addr.logradouro}${addr.name ? ' • ' + addr.name : ''}, Nº ${addr.numero}`;
           
           let tooltipContent = '';
           if (isBuilding) {
             const stats = Apartment.getStats(territory.id, addr.id);
-            tooltipContent = `<strong>🏢 ${Utils.escapeHtml(addr.name || addr.logradouro)}</strong><div class=tooltip-divider></div><div class=tooltip-item><span class=tooltip-label>Total Apts:</span><span class=tooltip-value>${stats.total}</span></div><div class=tooltip-item><span class=tooltip-label>Visitados:</span><span class=tooltip-value>${stats.visited}</span></div><div class=tooltip-item><span class=tooltip-label>Não Visitados:</span><span class=tooltip-value>${stats.notVisited}</span></div><div class=tooltip-item><span class=tooltip-label>Blocos:</span><span class=tooltip-value>${addr.blocks.map(b => b.name).join(', ')}</span></div><div class=tooltip-item><span class=tooltip-label>Portaria:</span><span class=tooltip-value>${PORTARIA_TYPES[addr.portariaType]}</span></div>`;
+            tooltipContent = `<strong>🏢 ${Utils.escapeHtml(addr.name || addr.logradouro)}</strong><div class=tooltip-divider></div><div class=tooltip-item><span class=tooltip-label>Total Apts:</span><span class=tooltip-value>${stats.total}</span></div><div class=tooltip-item><span class=tooltip-label>Visitados:</span><span class=tooltip-value>${stats.visited}</span></div><div class=tooltip-item><span class=tooltip-label>Não Visitados:</span><span class=tooltip-value>${stats.notVisited}</span></div><div class=tooltip-item><span class=tooltip-label>Blocos:</span><span class=tooltip-value>${addr.blocks.map(b => b.name).join(', ')}</span></div><div class=tooltip-item><span class=tooltip-label>Portaria:</span><span class=tooltip-value>${PORTARIA_TYPES[addr.portariaType]}</span></div>${addr.portaCarta ? `<div class=tooltip-item><span class=tooltip-label>Porta Carta:</span><span class=tooltip-value>${addr.portaCartaTipo === 'individual' ? 'Individual' : 'Coletivo'}</span></div>` : ''}`;
           } else {
             const note = hasNote ? AppState.addressNotes[`${territory.id}_${addr.id}`] : null;
-            tooltipContent = `<strong>🏠 ${Utils.escapeHtml(addr.logradouro)}, ${addr.numero}</strong><div class=tooltip-divider></div><div class=tooltip-item><span class=tooltip-label>CEP:</span><span class=tooltip-value>${addr.cep || 'N/A'}</span></div><div class=tooltip-item><span class=tooltip-label>Bairro:</span><span class=tooltip-value>${addr.bairro || 'N/A'}</span></div>${note ? `<div class=tooltip-item><span class=tooltip-label>Status:</span><span class=tooltip-value>${STATUS_LABELS[note.status] || 'N/A'}</span></div><div class=tooltip-item><span class=tooltip-label>Última Visita:</span><span class=tooltip-value>${note.dia ? Utils.formatDate(note.dia) : 'N/A'}</span></div>` : '<div class=tooltip-item><span class=tooltip-label>Status:</span><span class=tooltip-value>Não visitado</span></div>'}`;
+            tooltipContent = `<strong>🏠 ${Utils.escapeHtml(enderecoCompleto)}</strong><div class=tooltip-divider></div><div class=tooltip-item><span class=tooltip-label>CEP:</span><span class=tooltip-value>${addr.cep || 'N/A'}</span></div><div class=tooltip-item><span class=tooltip-label>Bairro:</span><span class=tooltip-value>${addr.bairro || 'N/A'}</span></div>${note ? `<div class=tooltip-item><span class=tooltip-label>Status:</span><span class=tooltip-value>${STATUS_LABELS[note.status] || 'N/A'}</span></div><div class=tooltip-item><span class=tooltip-label>Última Visita:</span><span class=tooltip-value>${note.dia ? Utils.formatDate(note.dia) : 'N/A'}</span></div>` : '<div class=tooltip-item><span class=tooltip-label>Status:</span><span class=tooltip-value>Não visitado</span></div>'}`;
           }
           
           return `
             <div class="address-item" style="border-left-color:${isBuilding ? 'var(--warning)' : territory.cor}" onmouseenter="Tooltip.show(this, \`${tooltipContent}\`)" onmouseleave="Tooltip.hide()">
               <div style="flex:1">
-                <strong>${Utils.escapeHtml(addr.logradouro)}${addr.name ? ' • ' + Utils.escapeHtml(addr.name) : ''}, Nº ${Utils.escapeHtml(addr.numero || 'S/N')}
+                <strong>${Utils.escapeHtml(enderecoCompleto)}
                 ${isBuilding ? `<span class="badge badge-warning" style="margin-left:8px">🏢 ${addr.totalApartments} APs</span>` : ''}
                 ${portariaBadge}
+                ${portaCartaBadge}
                 ${hasNote ? '<span class="badge" style="background:var(--success);color:#fff;margin-left:8px">✓</span>' : ''}
                 </strong>
                 <small style="color:var(--muted);display:block;margin-top:6px">${addr.cep || ''} • ${addr.bairro || ''}</small>
               </div>
               <div style="display:flex;gap:8px;flex-wrap:wrap">
-                ${isBuilding ? `<button class="btn btn-warning" onclick="Building.open('${addr.id}')">🏢 Apts</button>` : `<button class="btn btn-secondary" onclick="UI.showAddressDetails('${addr.id}')">🔍</button>`}
+                ${isBuilding ? `<button class="btn btn-warning" onclick="Building.open('${addr.id}')">🏢 Apts</button><button class="btn btn-info" onclick="Building.editBuilding('${addr.id}')">✏️</button>` : `<button class="btn btn-secondary" onclick="UI.showAddressDetails('${addr.id}')">🔍</button>`}
                 <a class="btn btn-primary" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${addr.logradouro}, ${addr.numero}, ${addr.bairro || ''}, ${addr.cidade || 'Fortaleza'}, ${addr.uf || 'CE'}, ${addr.cep || ''}`.trim())}" target="_blank" title="Ver no Google Maps">🗺️</a>
                 <button class="btn btn-danger" onclick="Address.delete('${territory.id}', '${addr.id}')">🗑️</button>
               </div>
@@ -945,6 +956,7 @@ const UI = {
     document.getElementById('houseCEP').value = '';
     document.getElementById('houseLogradouro').value = '';
     document.getElementById('houseNumero').value = '';
+    document.getElementById('houseQuadra').value = '';
     document.getElementById('houseBairro').value = '';
     Modal.open('addHouseModal');
   },
@@ -955,7 +967,11 @@ const UI = {
     document.getElementById('buildingNumero').value = '';
     document.getElementById('buildingName').value = '';
     document.getElementById('buildingBairro').value = '';
+    document.getElementById('buildingQuadra').value = '';
     document.getElementById('buildingPortaria').value = 'porteiro';
+    document.getElementById('buildingPortaCarta').checked = false;
+    document.getElementById('buildingPortaCartaTipo').value = 'coletivo';
+    document.getElementById('portaCartaTipoGroup').style.display = 'none';
     document.getElementById('buildingBlocks').value = '';
     document.getElementById('blockApartmentsContainer').innerHTML = '';
     Modal.open('addBuildingModal');
@@ -981,6 +997,40 @@ const Building = {
     } else {
       this.selectBlock(building.blocks[0].name);
     }
+  },
+  
+  editBuilding(buildingId) {
+    const territory = AppState.territories[AppState.currentTerritory];
+    const building = territory.addresses.find(a => a.id === buildingId);
+    if (!building) return;
+    
+    // Preenche o modal com os dados atuais
+    document.getElementById('buildingCEP').value = building.cep || '';
+    document.getElementById('buildingLogradouro').value = building.logradouro || '';
+    document.getElementById('buildingNumero').value = building.numero || '';
+    document.getElementById('buildingName').value = building.name || '';
+    document.getElementById('buildingBairro').value = building.bairro || '';
+    document.getElementById('buildingQuadra').value = building.quadra || '';
+    document.getElementById('buildingPortaria').value = building.portariaType || 'porteiro';
+    document.getElementById('buildingPortaCarta').checked = building.portaCarta || false;
+    document.getElementById('buildingPortaCartaTipo').value = building.portaCartaTipo || 'coletivo';
+    document.getElementById('portaCartaTipoGroup').style.display = building.portaCarta ? 'block' : 'none';
+    
+    const blocksStr = building.blocks.map(b => b.name).join(',');
+    document.getElementById('buildingBlocks').value = blocksStr;
+    
+    // Gera campos de apartamentos
+    const container = document.getElementById('blockApartmentsContainer');
+    container.innerHTML = building.blocks.map(block => `
+      <div class="form-group">
+        <label>Apartamentos no Bloco ${Utils.escapeHtml(block.name)}</label>
+        <input type="number" id="block_${block.name}" placeholder="Ex: 12" min="1" value="${block.apartments}">
+      </div>
+    `).join('');
+    
+    // Marca como edição
+    AppState.editingBuildingId = buildingId;
+    Modal.open('addBuildingModal');
   },
   
   selectBlock(blockName) {
@@ -1212,6 +1262,7 @@ function initApp() {
   document.getElementById('saveHouseBtn')?.addEventListener('click', () => {
     const logradouro = document.getElementById('houseLogradouro').value;
     const numero = document.getElementById('houseNumero').value;
+    const quadra = document.getElementById('houseQuadra').value;
     const cep = document.getElementById('houseCEP').value;
     const bairro = document.getElementById('houseBairro').value;
     
@@ -1220,8 +1271,14 @@ function initApp() {
       return;
     }
     
-    Address.addHouse(AppState.currentTerritory, { logradouro, numero, cep, bairro });
+    Address.addHouse(AppState.currentTerritory, { logradouro, numero, quadra, cep, bairro });
     Modal.close('addHouseModal');
+  });
+  
+  // Checkbox porta carta
+  document.getElementById('buildingPortaCarta')?.addEventListener('change', (e) => {
+    const group = document.getElementById('portaCartaTipoGroup');
+    group.style.display = e.target.checked ? 'block' : 'none';
   });
   
   // Modal Prédio - Gerar campos de apartamentos
@@ -1248,9 +1305,12 @@ function initApp() {
     const logradouro = document.getElementById('buildingLogradouro').value;
     const numero = document.getElementById('buildingNumero').value;
     const name = document.getElementById('buildingName').value;
+    const quadra = document.getElementById('buildingQuadra').value;
     const cep = document.getElementById('buildingCEP').value;
     const bairro = document.getElementById('buildingBairro').value;
     const portariaType = document.getElementById('buildingPortaria').value;
+    const portaCarta = document.getElementById('buildingPortaCarta').checked;
+    const portaCartaTipo = document.getElementById('buildingPortaCartaTipo').value;
     const blocksInput = document.getElementById('buildingBlocks').value.trim();
     
     if (!logradouro || !blocksInput || !AppState.currentTerritory) {
@@ -1265,15 +1325,42 @@ function initApp() {
       return { name: blockName, apartments };
     });
     
-    Address.addBuilding(AppState.currentTerritory, {
-      logradouro,
-      numero,
-      name,
-      cep,
-      bairro,
-      portariaType,
-      blocks
-    });
+    if (AppState.editingBuildingId) {
+      // Edição
+      const territory = AppState.territories[AppState.currentTerritory];
+      const building = territory.addresses.find(a => a.id === AppState.editingBuildingId);
+      if (building) {
+        building.logradouro = logradouro;
+        building.numero = numero;
+        building.name = name;
+        building.quadra = quadra;
+        building.cep = cep;
+        building.bairro = bairro;
+        building.portariaType = portariaType;
+        building.portaCarta = portaCarta;
+        building.portaCartaTipo = portaCartaTipo;
+        building.blocks = blocks;
+        building.totalApartments = blocks.reduce((sum, b) => sum + (b.apartments || 0), 0);
+        Storage.persist(false);
+        Territory.open(AppState.currentTerritory);
+        Toast.show('✅ Prédio atualizado');
+      }
+      AppState.editingBuildingId = null;
+    } else {
+      // Novo prédio
+      Address.addBuilding(AppState.currentTerritory, {
+        logradouro,
+        numero,
+        name,
+        quadra,
+        cep,
+        bairro,
+        portariaType,
+        portaCarta,
+        portaCartaTipo,
+        blocks
+      });
+    }
     Modal.close('addBuildingModal');
   });
   
@@ -1334,6 +1421,7 @@ window.Utils = Utils;
 window.Modal = Modal;
 window.CEP = CEP;
 window.Share = Share;
+window.AppState = AppState;
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initApp);
