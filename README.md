@@ -1,194 +1,152 @@
-# TarginoTur - Site Moderno
+# 🗺️ Sistema de Territórios - Monte Castelo
 
-Site moderno e responsivo para a empresa TarginoTur, especializada em passeios e transfers em Fortaleza/CE.
+Sistema completo para gerenciamento de territórios de pregação das Testemunhas de Jeová no bairro Monte Castelo/Centro - Fortaleza/CE.
 
-## 🚀 Características
+## 📋 Funcionalidades
 
-- **Design Moderno**: Interface limpa e profissional
-- **Tema Claro/Escuro**: Alternância entre temas com persistência
-- **Responsivo**: Adaptado para todos os dispositivos
-- **Performance Otimizada**: Carregamento rápido e eficiente
-- **SEO Friendly**: Otimizado para mecanismos de busca
-- **Segurança**: Headers de segurança e proteções implementadas
+### 🏘️ Gerenciamento de Territórios
+- **8 territórios pré-configurados** com cores e mapas
+- **Criação de novos territórios** personalizados
+- **Fixação de territórios** para acesso rápido
+- **Busca e filtros** por número ou nome
 
-## 🛠️ Tecnologias Utilizadas
+### 🏠 Cadastro de Endereços
+- **Casas individuais** com CEP automático
+- **Prédios completos** com blocos e apartamentos
+- **Sistema de quadras** para organização
+- **Edição completa** de prédios existentes
 
-- **HTML5**: Estrutura semântica
-- **CSS3**: Estilização moderna com variáveis CSS
-- **JavaScript**: Funcionalidades interativas
-- **PHP**: Backend dinâmico
-- **MySQL**: Banco de dados (opcional)
+### 🏢 Gestão de Prédios
+- **Múltiplos blocos** (A,B,C ou 1,2,3)
+- **Apartamentos editáveis** por bloco
+- **Tipos de portaria**: Porteiro, Eletrônica, Interfone
+- **Sistema de porta carta**: Coletivo ou Individual
+- **Badges visuais** para identificação rápida
 
-## 📁 Estrutura do Projeto
+### 📝 Controle de Visitas
+- **Status detalhados**: Não Visitado, Ausente, Conversado, Carta, Folheto, Recusou, Estudo
+- **Anotações por apartamento** com data e observações
+- **Filtros inteligentes** (só com notas, por status)
+- **Histórico completo** de visitas
 
-```
-site_targino/
-├── assets/
-│   ├── css/
-│   │   └── style.css
-│   └── js/
-│       └── script.js
-├── banner/
-│   ├── banner01.jpg
-│   ├── banner02.jpg
-│   └── banner03.jpg
-├── pacotes/
-│   ├── 123_1.jpg
-│   ├── 124_1.jpg
-│   └── ... (imagens dos pacotes)
-├── images/
-│   └── cartoes2.png
-├── config.php
-├── index.php
-├── passeios.php
-├── transfers.php
-├── .htaccess
-└── README.md
-```
+### 📅 Dias Trabalhados
+- **Registro de dias** com ruas/quadras trabalhadas
+- **Observações detalhadas** (clima, eventos)
+- **Histórico cronológico** automático
 
-## 🔧 Instalação
+### 💾 Backup e Sincronização
+- **Salvamento automático** no navegador
+- **Exportação JSON** para backup
+- **Importação de dados** de outros dispositivos
+- **Histórico com desfazer/refazer** (50 ações)
 
-### Requisitos
-- Servidor web (Apache/Nginx)
-- PHP 7.4 ou superior
-- MySQL (opcional)
+### 🎨 Interface Moderna
+- **Tema claro/escuro** alternável
+- **Design responsivo** para mobile/desktop
+- **Tooltips informativos** com detalhes
+- **Atalhos de teclado** (Ctrl+S, Ctrl+Z, etc.)
 
-### Passos de Instalação
+## 🚀 Como Usar
 
-1. **Clone ou baixe os arquivos** para o diretório do seu servidor web:
-   ```
-   c:\xampp\htdocs\site_targino\
-   ```
+### Instalação
+1. Baixe os arquivos `index.html` e `app_full.js`
+2. Coloque em uma pasta do servidor web (ex: `xampp/htdocs/MC/`)
+3. Acesse via navegador: `http://localhost/MC/`
 
-2. **Configure o banco de dados** (opcional):
-   - Edite o arquivo `config.php`
-   - Ajuste as credenciais do banco de dados
+### Primeiros Passos
+1. **Selecione um território** na barra lateral
+2. **Adicione endereços** usando os botões "🏠 Casa" ou "🏢 Prédio"
+3. **Registre visitas** clicando nos endereços
+4. **Marque dias trabalhados** com o botão "📅 Dia"
 
-3. **Configurar imagens**:
-   - Adicione as imagens dos banners na pasta `banner/`
-   - Adicione as imagens dos pacotes na pasta `pacotes/`
-   - Adicione a imagem dos cartões na pasta `images/`
+### Cadastro de Prédios
+1. Preencha **CEP** (busca automática de endereço)
+2. Complete **logradouro, número, nome do prédio**
+3. Defina **quadra** para organização
+4. Escolha **tipo de portaria**
+5. Marque **porta carta** se houver (coletivo/individual)
+6. Configure **blocos** (ex: A,B,C) e **apartamentos por bloco**
 
-4. **Configurar domínio** (para produção):
-   - Edite o arquivo `.htaccess`
-   - Substitua "seudominio.com" pelo seu domínio real
+### Edição de Prédios
+- Use o botão **"✏️"** ao lado do prédio
+- Modifique **número de apartamentos** por bloco
+- Atualize **informações de portaria e porta carta**
+- **Anotações existentes são preservadas**
 
-## 🎨 Funcionalidades
+## 📱 Recursos Avançados
 
-### Tema Claro/Escuro
-- Alternância automática entre temas
-- Persistência da preferência do usuário
-- Transições suaves
+### Atalhos de Teclado
+- `Ctrl + S` - Salvar dados
+- `Ctrl + Z` - Desfazer última ação
+- `Ctrl + Y` - Refazer ação
+- `Ctrl + E` - Exportar dados
 
-### Slider de Imagens
-- Rotação automática a cada 5 segundos
-- Controles manuais (setas e pontos)
-- Pausa ao passar o mouse
+### Badges e Indicadores
+- 🏢 **Amarelo** - Prédios com número de apartamentos
+- 👨💼🔐📞 **Azul** - Tipo de portaria
+- 📮📬 **Verde** - Porta carta (coletivo/individual)
+- ✓ **Verde** - Endereços com anotações
+- 📌 **Laranja** - Territórios fixados
 
-### Menu Responsivo
-- Menu hambúrguer para dispositivos móveis
-- Navegação suave entre seções
-- Fechamento automático ao clicar em links
+### Formatação de Endereços
+- **Com quadra**: "Quadra 1 Rua Caririaçu • ED Caririaçu, Nº 850"
+- **Sem quadra**: "Rua Caririaçu • ED Caririaçu, Nº 850"
 
-### Animações
-- Animações ao scroll
-- Efeitos hover nos cards
-- Transições suaves
+## 🔧 Tecnologias
 
-## 📱 Responsividade
+- **HTML5** - Estrutura e semântica
+- **CSS3** - Estilos e responsividade
+- **JavaScript ES6+** - Lógica e interatividade
+- **LocalStorage** - Persistência de dados
+- **ViaCEP API** - Busca automática de endereços
 
-O site é totalmente responsivo e se adapta a:
-- Desktop (1200px+)
-- Tablet (768px - 1199px)
-- Mobile (até 767px)
+## 📊 Estatísticas
 
-## 🔒 Segurança
-
-### Headers de Segurança
-- X-Content-Type-Options
-- X-Frame-Options
-- X-XSS-Protection
-- Referrer-Policy
-
-### Proteções Implementadas
-- Sanitização de inputs
-- Proteção contra hotlinking
-- Bloqueio de arquivos sensíveis
-- Validação de dados
-
-## ⚡ Performance
-
-### Otimizações
-- Compressão GZIP
-- Cache de arquivos estáticos
-- Lazy loading de imagens
-- Minificação de recursos
-
-### Métricas Esperadas
-- Tempo de carregamento: < 3 segundos
-- First Contentful Paint: < 1.5 segundos
-- Largest Contentful Paint: < 2.5 segundos
+O sistema fornece estatísticas em tempo real:
+- Total de territórios, endereços, prédios e apartamentos
+- Dias trabalhados por território
+- Apartamentos visitados vs não visitados
+- Status detalhado das visitas
 
 ## 🌐 Compatibilidade
 
-### Navegadores Suportados
-- Chrome 60+
-- Firefox 55+
-- Safari 12+
-- Edge 79+
+- ✅ **Chrome/Edge** (recomendado)
+- ✅ **Firefox**
+- ✅ **Safari**
+- ✅ **Mobile** (iOS/Android)
+- ✅ **Offline** (após primeiro carregamento)
 
-### Dispositivos
-- Desktop
-- Tablet
-- Smartphone
-- Smart TV
+## 💡 Dicas de Uso
 
-## 📞 Contato e Suporte
+### Organização
+- Use **quadras** para dividir territórios grandes
+- **Fixe territórios** mais utilizados
+- **Exporte dados** regularmente para backup
 
-Para suporte técnico ou dúvidas sobre o site:
+### Eficiência
+- Use **filtros** para focar em apartamentos não visitados
+- **Tooltips** mostram informações sem abrir modais
+- **Busca** por nome ou número de território
 
-- **Telefone**: (85) 98736-0977
-- **Email**: targinotur.fretamento@gmail.com
-- **WhatsApp**: https://api.whatsapp.com/send?phone=5585987360977
+### Colaboração
+- **Exporte/importe** dados entre dispositivos
+- **Compartilhe** resumos via WhatsApp
+- **Copie** estatísticas para relatórios
 
-## 🔄 Atualizações Futuras
+## 🆘 Suporte
 
-### Funcionalidades Planejadas
-- Sistema de reservas online
-- Integração com gateway de pagamento
-- Painel administrativo
-- Blog/notícias
-- Sistema de avaliações
-- Integração com redes sociais
+### Problemas Comuns
+- **Dados perdidos**: Verifique se JavaScript está habilitado
+- **CEP não encontrado**: Confira se está no formato correto
+- **Lentidão**: Exporte/importe dados para limpar cache
 
-### Melhorias Técnicas
-- Service Worker para PWA
-- Otimização de imagens WebP
-- Implementação de CDN
-- Monitoramento de performance
-
-## 📄 Licença
-
-Este projeto foi desenvolvido especificamente para a TarginoTur. Todos os direitos reservados.
-
-## 🤝 Contribuição
-
-Para contribuir com melhorias:
-
-1. Faça um fork do projeto
-2. Crie uma branch para sua feature
-3. Commit suas mudanças
-4. Push para a branch
-5. Abra um Pull Request
-
-## 📊 Analytics
-
-Para monitorar o desempenho do site, recomenda-se a implementação de:
-- Google Analytics
-- Google Search Console
-- Hotjar ou similar para heatmaps
-- PageSpeed Insights para performance
+### Backup de Segurança
+1. Clique em **"📤 Exportar"**
+2. Salve o arquivo `.json` em local seguro
+3. Para restaurar: **"📥 Importar"** + selecionar arquivo
 
 ---
 
-**Desenvolvido com ❤️ para TarginoTur**
+**Desenvolvido para as Testemunhas de Jeová - Congregação Monte Castelo/Centro - Fortaleza/CE**
+
+*Sistema offline, dados armazenados localmente no dispositivo*
