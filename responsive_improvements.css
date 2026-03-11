@@ -1,0 +1,388 @@
+/* ============================================================
+   MELHORIAS RESPONSIVAS — Sistema de Territórios
+   Este arquivo é ADITIVO: não modifica nenhuma regra existente.
+   Inclua DEPOIS de styles.css no index.html:
+   <link rel="stylesheet" href="responsive_improvements.css">
+   ============================================================ */
+
+/* ══════════════════════════════════════
+   HEADER — melhor empilhamento mobile
+   ══════════════════════════════════════ */
+
+/* Em telas médias: botões em duas linhas organizadas */
+@media (max-width: 900px) {
+  .header-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .header-left {
+    width: 100%;
+  }
+
+  .header-actions {
+    width: 100%;
+    justify-content: flex-start;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  /* Mostra labels em telas médias para melhor UX */
+  .btn-label {
+    display: inline !important;
+  }
+}
+
+/* Em mobile: botões menores e mais compactos */
+@media (max-width: 600px) {
+  .header-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+    gap: 6px;
+    width: 100%;
+  }
+
+  .header-actions .btn {
+    font-size: 0.72rem;
+    padding: 8px 6px;
+    min-height: 40px;
+    flex-direction: column;
+    gap: 2px;
+    text-align: center;
+  }
+
+  .header-actions .btn-label {
+    font-size: 0.65rem;
+    margin-left: 0;
+    display: block !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .brand {
+    font-size: 1.1rem !important;
+  }
+
+  .subtitle {
+    font-size: 0.8rem !important;
+  }
+}
+
+/* ══════════════════════════════════════
+   CONTEÚDO PRINCIPAL — padding mobile
+   ══════════════════════════════════════ */
+@media (max-width: 768px) {
+  .content {
+    padding: 12px !important;
+    border-radius: 10px !important;
+  }
+
+  /* Stats grid: sempre 2 colunas no mobile, nunca 1 */
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px;
+  }
+
+  .stat-card {
+    padding: 10px 8px;
+  }
+
+  .stat-card h4 {
+    font-size: 1.4rem;
+  }
+}
+
+/* ══════════════════════════════════════
+   QUADRAS — cards mais compactos mobile
+   ══════════════════════════════════════ */
+@media (max-width: 600px) {
+  .quadra-card {
+    padding: 12px;
+  }
+
+  .quadra-card-header {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+  /* Botões de ação da quadra: lado a lado */
+  .quadra-card-header .btn-group {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .casas-grid {
+    gap: 3px;
+  }
+
+  .casa-btn {
+    width: 30px !important;
+    height: 30px !important;
+    font-size: 0.68rem !important;
+    min-height: 30px !important;
+    border-radius: 4px;
+  }
+
+  .lado-header {
+    font-size: 0.72rem;
+  }
+
+  /* Esconde o emoji de lado em telas muito pequenas para ganhar espaço */
+  .lado-header > span:first-child {
+    display: none;
+  }
+}
+
+/* ══════════════════════════════════════
+   MODAIS — full screen em mobile
+   ══════════════════════════════════════ */
+@media (max-width: 600px) {
+  .modal-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 92dvh;
+    overflow-y: auto;
+    border-radius: 20px 20px 0 0;
+    margin: auto 0 0 0;
+    padding: 16px !important;
+  }
+
+  .modal-content-wide {
+    max-width: 100% !important;
+  }
+
+  /* Modais deslizam de baixo para cima no mobile */
+  .modal {
+    align-items: flex-end !important;
+    padding: 0 !important;
+  }
+
+  /* Grade de lados da quadra: 1 coluna */
+  .modal-content [style*="grid-template-columns:1fr 1fr"] {
+    display: grid;
+    grid-template-columns: 1fr !important;
+  }
+
+  .modal-header h2 {
+    font-size: 1rem;
+  }
+}
+
+/* ══════════════════════════════════════
+   OVERVIEW — territórios grid
+   ══════════════════════════════════════ */
+@media (max-width: 480px) {
+  .territories-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .territory-overview-card {
+    padding: 10px 12px;
+  }
+
+  .mini-badge {
+    font-size: 0.68rem;
+    padding: 2px 6px;
+  }
+
+  .overview-header h2 {
+    font-size: 1.2rem;
+  }
+}
+
+/* ══════════════════════════════════════
+   SIDEBAR — melhor scroll e close-btn
+   ══════════════════════════════════════ */
+@media (max-width: 768px) {
+  /* Botão de fechar o sidebar no mobile */
+  .sidebar::before {
+    content: '';
+    display: block;
+    height: 4px;
+    width: 40px;
+    background: var(--border);
+    border-radius: 99px;
+    margin: 0 auto 16px;
+  }
+
+  .territory-list {
+    max-height: calc(100dvh - 200px) !important;
+  }
+}
+
+/* ══════════════════════════════════════
+   TABS (sidebar items) — mobile-friendly
+   ══════════════════════════════════════ */
+@media (max-width: 768px) {
+  .tab {
+    padding: 10px 10px !important;
+    min-height: 56px !important;
+    gap: 10px !important;
+  }
+
+  .tab-badge {
+    width: 40px !important;
+    height: 40px !important;
+    font-size: 0.9rem !important;
+  }
+}
+
+/* ══════════════════════════════════════
+   BOTÕES DE AÇÃO DO TERRITÓRIO
+   Empilha em coluna em telas pequenas
+   ══════════════════════════════════════ */
+@media (max-width: 480px) {
+  /* Card de cabeçalho do território */
+  .territory-hero .btn-group,
+  .card .btn-group {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  /* Botões menores dentro de cards */
+  .card .btn {
+    font-size: 0.78rem;
+    padding: 8px 10px;
+    min-height: 38px;
+  }
+
+  /* Progresso global */
+  .card h3 {
+    font-size: 1rem;
+  }
+}
+
+/* ══════════════════════════════════════
+   PRÉDIOS — lista de apartamentos
+   ══════════════════════════════════════ */
+@media (max-width: 600px) {
+  /* Garante que a grid de apartamentos role horizontalmente */
+  .building-apts-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Badges menores */
+  .badge {
+    font-size: 0.7rem !important;
+    padding: 2px 7px !important;
+  }
+}
+
+/* ══════════════════════════════════════
+   IMPORT WIZARD — steps compactos
+   ══════════════════════════════════════ */
+@media (max-width: 520px) {
+  .iw-progress-wrap {
+    margin-bottom: 12px;
+  }
+
+  .iw-src-box {
+    padding: 10px 12px;
+    margin-bottom: 12px;
+  }
+
+  .iw-action-card {
+    padding: 10px !important;
+    gap: 10px;
+  }
+
+  .iw-action-icon {
+    font-size: 1.1rem !important;
+    min-width: 28px;
+  }
+
+  #iwBtnNext,
+  .iw-action-card strong {
+    font-size: 0.85rem;
+  }
+}
+
+/* ══════════════════════════════════════
+   TOAST — reposicionado em mobile
+   ══════════════════════════════════════ */
+@media (max-width: 600px) {
+  .toast {
+    bottom: 16px !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) translateY(80px) !important;
+    width: calc(100vw - 32px) !important;
+    max-width: 340px !important;
+    text-align: center;
+    font-size: 0.88rem;
+  }
+
+  .toast.show {
+    transform: translateX(-50%) translateY(0) !important;
+  }
+}
+
+/* ══════════════════════════════════════
+   APP GERAL — evita overflow horizontal
+   ══════════════════════════════════════ */
+@media (max-width: 480px) {
+  .app {
+    padding: 8px !important;
+  }
+
+  /* Evita que qualquer elemento vaze */
+  .content,
+  .card,
+  .quadra-card,
+  .modal-content {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  /* Scrolling horizontal apenas em containers explícitos */
+  .casas-grid {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 4px;
+  }
+}
+
+/* ══════════════════════════════════════
+   LANDSCAPE PHONE — ajustes especiais
+   ══════════════════════════════════════ */
+@media (max-height: 500px) and (orientation: landscape) {
+  .sidebar {
+    padding: 10px 12px !important;
+  }
+
+  .sidebar h3 {
+    margin-bottom: 6px;
+  }
+
+  .modal-content {
+    max-height: 85dvh;
+    overflow-y: auto;
+  }
+
+  header {
+    padding: 10px 16px !important;
+  }
+}
+
+/* ══════════════════════════════════════
+   ACESSIBILIDADE — foco visível
+   ══════════════════════════════════════ */
+@media (pointer: coarse) {
+  /* Dispositivos touch: aumenta área de toque mínima */
+  .btn,
+  .tab,
+  .casa-btn,
+  .close-modal {
+    min-height: 44px;
+  }
+}
+
+/* Melhora foco para teclado */
+*:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}

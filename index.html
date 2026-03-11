@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Sistema de Territórios — Monte Castelo / Centro">
+  <meta name="theme-color" content="#1e3a8a">
+  <title>🏢 Sistema de Territórios — Monte Castelo / Centro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="responsive_improvements.css">
+  <script id="territory-data" type="application/json"></script>
+</head>
+<body>
+<a class="skip-link" href="#mainContent">Ir para o conteúdo</a>
+<div class="app" id="app">
+
+  <header role="banner">
+    <div class="header-content">
+      <div class="header-left">
+        <button id="sidebarToggle" class="sidebar-toggle" aria-label="Abrir menu lateral" aria-expanded="false" type="button">☰</button>
+        <div>
+          <div class="brand">🏢 Sistema de Territórios</div>
+          <div class="subtitle">Monte Castelo / Centro</div>
+        </div>
+      </div>
+      <nav class="header-actions" aria-label="Ações principais">
+        <button id="undoBtn"        class="btn btn-primary" title="Desfazer (Ctrl+Z)"  type="button">↶ <span class="btn-label">Desfazer</span></button>
+        <button id="redoBtn"        class="btn btn-primary" title="Refazer (Ctrl+Y)"   type="button">↷ <span class="btn-label">Refazer</span></button>
+        <button id="saveBtn"        class="btn btn-primary" title="Salvar (Ctrl+S)"    type="button">💾 <span class="btn-label">Salvar</span></button>
+        <button id="exportBtn"      class="btn btn-primary" title="Exportar JSON"      type="button">📤 <span class="btn-label">Exportar</span></button>
+        <button id="importBtn"      class="btn btn-primary" title="Importar JSON"      type="button">📥 <span class="btn-label">Importar</span></button>
+        <input  id="fileInput"      type="file" accept="application/json" hidden aria-hidden="true">
+        <button id="copySummaryBtn" class="btn btn-primary" title="Copiar resumo"      type="button">📋 <span class="btn-label">Copiar</span></button>
+        <button id="shareBtn"       class="btn btn-primary" title="Compartilhar"       type="button">📲 <span class="btn-label">WhatsApp</span></button>
+        <button id="themeBtn"       class="btn btn-primary" title="Alternar tema"      type="button">🌙 <span class="btn-label">Tema</span></button>
+        <button id="newTerritoryBtn" class="btn btn-success" title="Novo território"   type="button">➕ <span class="btn-label">Novo</span></button>
+        <a href="criador_de_quadra.html" class="btn btn-rotamax" title="RotaMax">🗺️ <span class="btn-label">RotaMax</span></a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="layout" id="layoutRoot">
+    <aside class="sidebar" id="sidebar" role="complementary" aria-label="Lista de territórios">
+      <h3>📋 Territórios</h3>
+      <div class="search">
+        <input id="territorySearch" type="search" placeholder="🔎 Buscar territórios…" aria-label="Buscar território">
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding:6px 0;border-bottom:2px solid var(--border)">
+        <small style="color:var(--text-secondary)">Total:</small>
+        <strong id="totalTerritories" style="font-size:var(--font-size-lg)">0</strong>
+      </div>
+      <div class="territory-list" id="territoriesList" role="tablist" aria-label="Territórios"></div>
+    </aside>
+    <main id="mainContent" class="content" role="main" tabindex="-1"></main>
+  </div>
+</div>
+
+<div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
+<div id="tooltipContainer" class="tooltip" role="tooltip" aria-hidden="true"></div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<!-- ══ MODAL: Novo Território ══ -->
+<div id="newTerritoryModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="ntTitle">
+  <div class="modal-content">
+    <div class="modal-header"><h2 id="ntTitle">➕ Novo Território</h2><button class="close-modal" data-close="newTerritoryModal" aria-label="Fechar">×</button></div>
+    <div class="form-group"><label for="newTerritoryNumber">Número</label><input id="newTerritoryNumber" type="number" placeholder="Ex: 25" min="1" max="9999"></div>
+    <div class="form-group"><label for="newTerritoryName">Nome</label><input id="newTerritoryName" type="text" placeholder="Ex: Rua Principal"></div>
+    <div class="form-group"><label for="newTerritoryCEP">CEP <small style="color:var(--muted)">(opcional)</small></label><input id="newTerritoryCEP" type="text" placeholder="60325-000" maxlength="9"></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px">
+      <button class="btn btn-secondary" data-close="newTerritoryModal" type="button">Cancelar</button>
+      <button id="createTerritoryBtn" class="btn btn-success" type="button">✅ Criar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: Nova/Editar Quadra ══ -->
+<div id="addQuadraModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="quadraModalTitle">
+  <div class="modal-content modal-content-wide">
+    <div class="modal-header">
+      <h2 id="quadraModalTitle">🏘️ Nova Quadra</h2>
+      <button class="close-modal" data-close="addQuadraModal" aria-label="Fechar">×</button>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="form-group">
+        <label for="quadraNome">Nome da Quadra</label>
+        <input id="quadraNome" type="text" placeholder="Ex: Quadra A ou Bloco 1">
+      </div>
+      <div class="form-group">
+        <label for="quadraNumero">Número <small style="color:var(--muted)">(opcional)</small></label>
+        <input id="quadraNumero" type="text" placeholder="Ex: Q1, 01">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="quadraCEP">CEP</label>
+      <div style="display:flex;gap:8px">
+        <input id="quadraCEP" type="text" placeholder="60325-000" maxlength="9" style="flex:1">
+        <button class="btn btn-primary" onclick="searchQuadraCEP()" type="button">🔍</button>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="quadraLogradouro">Logradouro</label>
+      <input id="quadraLogradouro" type="text" placeholder="Rua, Avenida…">
+    </div>
+    <div class="form-group">
+      <label for="quadraBairro">Bairro</label>
+      <input id="quadraBairro" type="text" placeholder="Monte Castelo">
+    </div>
+
+    <div style="margin:16px 0 8px;padding:10px;background:var(--accent-light);border-radius:var(--radius-sm);border-left:3px solid var(--accent)">
+      <strong style="font-size:.85rem">🏠 Casas por Lado da Quadra</strong>
+      <p style="font-size:.78rem;color:var(--text-secondary);margin-top:2px">Informe quantas casas há em cada lado. Deixe 0 para lados sem casas.</p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="form-group">
+        <label for="quadraLadoA">⬆️ Lado Norte</label>
+        <input id="quadraLadoA" type="number" min="0" max="200" placeholder="0">
+      </div>
+      <div class="form-group">
+        <label for="quadraLadoB">⬇️ Lado Sul</label>
+        <input id="quadraLadoB" type="number" min="0" max="200" placeholder="0">
+      </div>
+      <div class="form-group">
+        <label for="quadraLadoC">➡️ Lado Leste</label>
+        <input id="quadraLadoC" type="number" min="0" max="200" placeholder="0">
+      </div>
+      <div class="form-group">
+        <label for="quadraLadoD">⬅️ Lado Oeste</label>
+        <input id="quadraLadoD" type="number" min="0" max="200" placeholder="0">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="quadraObs">Observações</label>
+      <textarea id="quadraObs" placeholder="Detalhes adicionais sobre esta quadra…" rows="2"></textarea>
+    </div>
+
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px">
+      <button class="btn btn-secondary" data-close="addQuadraModal" type="button">Cancelar</button>
+      <button id="saveQuadraBtn" class="btn btn-success" type="button">💾 Salvar Quadra</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: Casa da Quadra ══ -->
+<div id="quadraCasaModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="quadraCasaTitle">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="quadraCasaTitle">🏠 Casa</h2>
+      <button class="close-modal" data-close="quadraCasaModal" aria-label="Fechar">×</button>
+    </div>
+    <div class="form-group">
+      <label for="quadraCasaStatus">📌 Status</label>
+      <select id="quadraCasaStatus">
+        <option value="">— Sem status —</option>
+        <option value="nao-visitado">📘 Não Visitado</option>
+        <option value="ausente">🚪 Ausente</option>
+        <option value="conversado">💬 Conversado</option>
+        <option value="carta">✉️ Deixou Carta</option>
+        <option value="folheto">📄 Deixou Folheto</option>
+        <option value="recusou">🚫 Recusou</option>
+        <option value="estudo">📚 Estudo</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="quadraCasaDia">📅 Data</label>
+      <input type="date" id="quadraCasaDia">
+    </div>
+    <div class="form-group">
+      <label for="quadraCasaObs">📋 Observações</label>
+      <textarea id="quadraCasaObs" placeholder="Detalhes da visita…"></textarea>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:20px">
+      <button class="btn btn-secondary" data-close="quadraCasaModal" type="button">Cancelar</button>
+      <button id="deleteQuadraCasaBtn" class="btn btn-danger" style="display:none" type="button">🗑️ Limpar</button>
+      <button id="saveQuadraCasaBtn" class="btn btn-success" type="button">💾 Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: Dias Trabalhados ══ -->
+<div id="diasModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="diasTitle">
+  <div class="modal-content">
+    <div class="modal-header"><h2 id="diasTitle">📅 Dia Trabalhado</h2><button class="close-modal" data-close="diasModal" aria-label="Fechar">×</button></div>
+    <div class="form-group"><label for="diaDate">Data</label><input type="date" id="diaDate" required></div>
+    <div class="form-group"><label for="diaRuas">Ruas / Quadras visitadas</label><textarea id="diaRuas" placeholder="Ex: Rua A, Quadra 10…"></textarea></div>
+    <div class="form-group"><label for="diaObs">Observações</label><textarea id="diaObs" placeholder="Ex: Manhã chuvosa…"></textarea></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px">
+      <button class="btn btn-secondary" data-close="diasModal" type="button">Cancelar</button>
+      <button id="saveDiaBtn" class="btn btn-success" type="button">💾 Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: Selecionar Bloco ══ -->
+<div id="blockModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="blockTitle">
+  <div class="modal-content">
+    <div class="modal-header"><h2 id="blockTitle">🏢 Selecionar Bloco</h2><button class="close-modal" data-close="blockModal" aria-label="Fechar">×</button></div>
+    <div class="block-selector" id="blockSelector"></div>
+  </div>
+</div>
+
+<!-- ══ MODAL: Lista de Apartamentos ══ -->
+<div id="apartmentListModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="apartmentListTitle">
+  <div class="modal-content">
+    <div class="modal-header"><h2 id="apartmentListTitle">🏢 Apartamentos</h2><button class="close-modal" data-close="apartmentListModal" aria-label="Fechar">×</button></div>
+    <div style="margin-bottom:14px"><label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:var(--font-size-sm)"><input id="onlyNotedToggle" type="checkbox"> Mostrar só com notas</label></div>
+    <div class="apartment-selector" id="apartmentSelector"></div>
+  </div>
+</div>
+
+<!-- ══ MODAL: Apartamento individual ══ -->
+<div id="apartmentModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="apartmentModalTitle">
+  <div class="modal-content">
+    <div class="modal-header"><h2 id="apartmentModalTitle">🏠 Apartamento</h2><button class="close-modal" data-close="apartmentModal" aria-label="Fechar">×</button></div>
+    <div class="form-group"><label for="apartmentStatus">📌 Status</label>
+      <select id="apartmentStatus">
+        <option value="">— Sem status —</option>
+        <option value="nao-visitado">📘 Não Visitado</option>
+        <option value="ausente">🚪 Ausente</option>
+        <option value="conversado">💬 Conversado</option>
+        <option value="carta">✉️ Deixou Carta</option>
+        <option value="folheto">📄 Deixou Folheto</option>
+        <option value="recusou">🚫 Recusou</option>
+        <option value="estudo">📚 Estudo</option>
+      </select>
+    </div>
+    <div class="form-group"><label for="apartmentDia">📅 Data</label><input type="date" id="apartmentDia"></div>
+    <div class="form-group"><label for="apartmentNotes">📋 Observações</label><textarea id="apartmentNotes" placeholder="Ex: Deixou carta…"></textarea></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:20px">
+      <button class="btn btn-secondary" data-close="apartmentModal" type="button">Cancelar</button>
+      <button id="deleteApartmentNoteBtn" class="btn btn-danger" style="display:none" type="button">🗑️ Limpar</button>
+      <button id="saveApartmentNoteBtn"   class="btn btn-success" type="button">💾 Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: Detalhes de Endereço ══ -->
+<div id="addressDetailsModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="addrTitle">
+  <div class="modal-content">
+    <div class="modal-header"><h2 id="addrTitle">🏠 Detalhes do Endereço</h2><button class="close-modal" data-close="addressDetailsModal" aria-label="Fechar">×</button></div>
+    <div id="addressInfoDisplay" style="margin-bottom:16px;padding:12px;background:var(--bg-secondary);border-radius:var(--radius-sm);border:2px solid var(--border)"></div>
+    <div class="form-group"><label for="addressStatusSelect">📌 Status</label>
+      <select id="addressStatusSelect">
+        <option value="">— Sem status —</option>
+        <option value="nao-visitado">📘 Não Visitado</option>
+        <option value="ausente">🚪 Ausente</option>
+        <option value="conversado">💬 Conversado</option>
+        <option value="carta">✉️ Carta</option>
+        <option value="folheto">📄 Folheto</option>
+        <option value="recusou">🚫 Recusou</option>
+        <option value="estudo">📚 Estudo</option>
+      </select>
+    </div>
+    <div class="form-group"><label for="addressDia">📅 Data</label><input id="addressDia" type="date"></div>
+    <div class="form-group"><label for="addressObs">📝 Observações</label><textarea id="addressObs" placeholder="Detalhes adicionais…"></textarea></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:20px">
+      <button class="btn btn-secondary" data-close="addressDetailsModal" type="button">Cancelar</button>
+      <button id="deleteAddressNoteBtn" class="btn btn-danger" style="display:none" type="button">🗑️ Limpar</button>
+      <button id="saveAddressDetailsBtn" class="btn btn-success" type="button">💾 Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: Adicionar Casa ══ -->
+<div id="addHouseModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="houseTitle">
+  <div class="modal-content">
+    <div class="modal-header"><h2 id="houseTitle">🏠 Adicionar Casa</h2><button class="close-modal" data-close="addHouseModal" aria-label="Fechar">×</button></div>
+    <div class="form-group"><label for="houseCEP">CEP</label>
+      <div style="display:flex;gap:8px"><input id="houseCEP" type="text" placeholder="60325-000" maxlength="9" style="flex:1"><button class="btn btn-primary" onclick="searchHouseCEP()" type="button">🔍</button></div>
+    </div>
+    <div class="form-group"><label for="houseLogradouro">Logradouro <span style="color:var(--danger)">*</span></label><input id="houseLogradouro" type="text" placeholder="Rua, Avenida…"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="form-group"><label for="houseNumero">Número</label><input id="houseNumero" type="text" placeholder="123"></div>
+      <div class="form-group"><label for="houseQuadra">Quadra</label><input id="houseQuadra" type="text" placeholder="Q1"></div>
+    </div>
+    <div class="form-group"><label for="houseBairro">Bairro</label><input id="houseBairro" type="text" placeholder="Monte Castelo"></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px">
+      <button class="btn btn-secondary" data-close="addHouseModal" type="button">Cancelar</button>
+      <button id="saveHouseBtn" class="btn btn-success" type="button">💾 Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: Adicionar Prédio ══ -->
+<div id="addBuildingModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="buildingTitle">
+  <div class="modal-content modal-content-wide">
+    <div class="modal-header"><h2 id="buildingTitle">🏢 Adicionar Prédio</h2><button class="close-modal" data-close="addBuildingModal" aria-label="Fechar">×</button></div>
+    <div class="form-group"><label for="buildingCEP">CEP</label>
+      <div style="display:flex;gap:8px"><input id="buildingCEP" type="text" placeholder="60325-000" maxlength="9" style="flex:1"><button class="btn btn-primary" onclick="searchBuildingCEP()" type="button">🔍</button></div>
+    </div>
+    <div class="form-group"><label for="buildingLogradouro">Logradouro <span style="color:var(--danger)">*</span></label><input id="buildingLogradouro" type="text" placeholder="Rua, Avenida…"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="form-group"><label for="buildingNumero">Número</label><input id="buildingNumero" type="text" placeholder="123"></div>
+      <div class="form-group"><label for="buildingQuadra">Quadra</label><input id="buildingQuadra" type="text" placeholder="Q1"></div>
+    </div>
+    <div class="form-group"><label for="buildingName">Nome do Edifício</label><input id="buildingName" type="text" placeholder="Ed. Copacabana…"></div>
+    <div class="form-group"><label for="buildingBairro">Bairro</label><input id="buildingBairro" type="text" placeholder="Monte Castelo"></div>
+    <div class="form-group"><label for="buildingPortaria">Tipo de Portaria</label>
+      <select id="buildingPortaria">
+        <option value="sem-portaria">🚪 Sem Portaria</option>
+        <option value="porteiro">👨‍💼 Porteiro</option>
+        <option value="eletronica">🔐 Eletrônica</option>
+        <option value="interfone">📞 Interfone</option>
+      </select>
+    </div>
+    <div class="form-group"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input id="buildingPortaCarta" type="checkbox"> 📮 Tem Porta Carta</label></div>
+    <div class="form-group" id="portaCartaTipoGroup" style="display:none"><label for="buildingPortaCartaTipo">Tipo de Porta Carta</label>
+      <select id="buildingPortaCartaTipo"><option value="coletivo">📮 Coletivo</option><option value="individual">📬 Individual</option></select>
+    </div>
+    <div class="form-group"><label for="buildingBlocks">Blocos <small style="color:var(--muted)">(separados por vírgula)</small></label>
+      <input id="buildingBlocks" type="text" placeholder="A, B, C  ou  1, 2, 3">
+    </div>
+    <div id="blockApartmentsContainer"></div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px">
+      <button class="btn btn-secondary" data-close="addBuildingModal" type="button">Cancelar</button>
+      <button id="saveBuildingBtn" class="btn btn-success" type="button">💾 Salvar</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ MODAL: Import Wizard ══ -->
+<div id="importWizardModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="iwTitle">
+  <div class="modal-content modal-content-wide" style="max-width:520px">
+
+    <div class="modal-header">
+      <h2 id="iwTitle">📥 Importar JSON</h2>
+      <button class="close-modal" data-close="importWizardModal" aria-label="Fechar">×</button>
+    </div>
+
+    <!-- Progresso -->
+    <div class="iw-progress-wrap">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <span id="iwProgress" style="font-size:.82rem;color:var(--text-secondary);font-weight:600"></span>
+        <span style="font-size:.75rem;color:var(--muted)">Revise cada território</span>
+      </div>
+      <div class="iw-progress-track">
+        <div id="iwProgressBar" class="iw-progress-bar"></div>
+      </div>
+    </div>
+
+    <!-- Info do território importado -->
+    <div id="iwSrcInfo" class="iw-src-box"></div>
+
+    <!-- Ação -->
+    <p style="font-weight:700;margin-bottom:10px;font-size:.9rem">O que fazer com esses dados?</p>
+    <div class="iw-action-group">
+
+      <label class="iw-action-card" id="iwCardMerge">
+        <input type="radio" name="iwAction" id="iwActionMerge" value="merge"
+          onchange="ImportWizard._setAction('merge')">
+        <div class="iw-action-icon">🔀</div>
+        <div>
+          <strong>Mesclar em um território existente</strong>
+          <div class="iw-action-desc">Adiciona os dados ao território que você escolher abaixo</div>
+        </div>
+      </label>
+
+      <label class="iw-action-card" id="iwCardNew">
+        <input type="radio" name="iwAction" id="iwActionNew" value="new"
+          onchange="ImportWizard._setAction('new')">
+        <div class="iw-action-icon">➕</div>
+        <div>
+          <strong>Criar território novo</strong>
+          <div class="iw-action-desc">Cria um novo território com esses dados</div>
+        </div>
+      </label>
+
+      <label class="iw-action-card" id="iwCardSkip">
+        <input type="radio" name="iwAction" id="iwActionSkip" value="skip"
+          onchange="ImportWizard._setAction('skip')">
+        <div class="iw-action-icon">⏭️</div>
+        <div>
+          <strong>Ignorar</strong>
+          <div class="iw-action-desc">Pula esse território sem importar nada</div>
+        </div>
+      </label>
+
+    </div>
+
+    <!-- Seletor de território destino (só aparece em "mesclar") -->
+    <div id="iwTargetWrap" style="margin-top:14px;display:none">
+      <label for="iwTargetSelect" style="font-weight:600;font-size:.88rem;display:block;margin-bottom:6px">
+        📍 Território de destino
+      </label>
+      <select id="iwTargetSelect" style="width:100%;padding:10px;border-radius:var(--radius-sm);border:2px solid var(--border);background:var(--card);color:var(--text);font-size:.9rem"
+        onchange="ImportWizard._setTarget(this.value)">
+      </select>
+    </div>
+
+    <!-- Botões -->
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px">
+      <button class="btn btn-secondary" data-close="importWizardModal" type="button">Cancelar</button>
+      <button id="iwBtnNext" class="btn btn-success" type="button"
+        onclick="ImportWizard.next()">Próximo →</button>
+    </div>
+
+  </div>
+</div>
+
+<script src="app_full.js"></script>
+</body>
+</html>

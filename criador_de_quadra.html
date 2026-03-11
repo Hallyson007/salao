@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>🗺️ RotaMax — Planejador de Rotas</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Reutiliza EXATAMENTE o mesmo styles.css do Sistema de Territórios -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div class="app" id="app">
+
+    <!-- ── Cabeçalho idêntico ao padrão do index.html ── -->
+    <header class="rp-header" role="banner">
+      <div class="header-content">
+        <div class="header-left">
+          <div>
+            <div class="brand">🗺️ Rota<span>Max</span></div>
+            <div class="subtitle">Monte Castelo / Centro — Planejador de Rotas</div>
+          </div>
+        </div>
+        <nav class="header-actions">
+          <button id="rpThemeBtn" class="btn btn-primary" title="Alternar tema">🌙 <span class="btn-label">Tema</span></button>
+          <a href="index.html" class="btn rp-header-back" title="Voltar ao Sistema de Territórios">🔙 <span class="btn-label">Territórios</span></a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- ── Aviso de pré-carregamento (quando vem do Territórios) ── -->
+    <div class="rp-preload-notice" id="rpPreloadNotice">
+      <span>📍</span>
+      <span>Endereços do território <strong id="rpPreloadName"></strong> carregados. Ajuste os pontos e abra a rota.</span>
+      <button class="btn-icon" onclick="document.getElementById('rpPreloadNotice').classList.remove('show')" style="margin-left:auto;flex-shrink:0">✕</button>
+    </div>
+
+    <!-- ── Conteúdo principal ── -->
+    <div id="rpMain">
+
+      <!-- Transporte -->
+      <div class="card">
+        <p class="rp-section-label">Modo de Transporte</p>
+        <div class="rp-transport-grid" id="rpTransportGrid">
+          <button class="rp-transport-btn active" data-mode="driving"   onclick="rpSelectMode(this)"><span class="icon">🚗</span>Carro</button>
+          <button class="rp-transport-btn"         data-mode="driving"   onclick="rpSelectMode(this)"><span class="icon">🏍️</span>Moto</button>
+          <button class="rp-transport-btn"         data-mode="driving"   onclick="rpSelectMode(this)"><span class="icon">🚛</span>Caminhão</button>
+          <button class="rp-transport-btn"         data-mode="driving"   onclick="rpSelectMode(this)"><span class="icon">🚜</span>Trator</button>
+          <button class="rp-transport-btn"         data-mode="driving"   onclick="rpSelectMode(this)"><span class="icon">🚐</span>Van</button>
+          <button class="rp-transport-btn"         data-mode="walking"   onclick="rpSelectMode(this)"><span class="icon">🚶</span>A Pé</button>
+          <button class="rp-transport-btn"         data-mode="bicycling" onclick="rpSelectMode(this)"><span class="icon">🚲</span>Bike</button>
+          <button class="rp-transport-btn"         data-mode="transit"   onclick="rpSelectMode(this)"><span class="icon">🚌</span>Ônibus</button>
+          <button class="rp-transport-btn"         data-mode="transit"   onclick="rpSelectMode(this)"><span class="icon">🚇</span>Metrô</button>
+          <button class="rp-transport-btn"         data-mode="driving"   onclick="rpSelectMode(this)"><span class="icon">⛵</span>Barco</button>
+        </div>
+
+        <div class="rp-options-row">
+          <div class="rp-option-chip" id="rpOptToll"    onclick="rpToggleOpt('toll')">🚫 Pedágios</div>
+          <div class="rp-option-chip" id="rpOptHighway" onclick="rpToggleOpt('highway')">🛣️ Rodovias</div>
+          <div class="rp-option-chip" id="rpOptFerry"   onclick="rpToggleOpt('ferry')">⛴️ Balsas</div>
+        </div>
+      </div>
+
+      <!-- Paradas -->
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--spacing-md)">
+          <h3 style="margin:0">🏘️ Paradas da Rota</h3>
+          <span class="rp-stop-count" id="rpStopCount">2 / 50</span>
+        </div>
+        <div id="rpStopsList"></div>
+        <button class="rp-btn-add" id="rpBtnAdd" onclick="rpAddStop()">＋ Adicionar Parada</button>
+      </div>
+
+      <!-- Botões de ação -->
+      <div class="rp-action-row">
+        <button class="btn btn-success" style="font-size:var(--font-size-base);font-weight:700;min-height:var(--min-touch)" onclick="rpOpenRoute()">🗺️ Abrir no Google Maps</button>
+        <button class="btn btn-danger"  onclick="rpClearAll()" title="Limpar tudo">🗑️</button>
+      </div>
+
+      <!-- Painel de exportação -->
+      <div class="rp-export-panel" id="rpExportPanel" style="display:none">
+        <div class="rp-export-tabs">
+          <button class="rp-export-tab act-url" id="rpTabUrl"    onclick="rpSwitchTab('url')">🔗 Link</button>
+          <button class="rp-export-tab"          id="rpTabJson"   onclick="rpSwitchTab('json')">{} JSON</button>
+          <button class="rp-export-tab"          id="rpTabImport" onclick="rpSwitchTab('import')">📥 Importar</button>
+        </div>
+        <div class="rp-export-body visible" id="rpBodyUrl">
+          <textarea class="rp-export-textarea" id="rpUrlOutput" readonly rows="3"></textarea>
+          <div class="rp-export-actions">
+            <button class="btn btn-primary"   onclick="rpCopyTab('url')">📋 Copiar</button>
+            <button class="btn btn-primary"   onclick="rpOpenRoute()">↗️ Abrir</button>
+            <button class="btn btn-secondary" onclick="rpShareRoute()">📤 Compartilhar</button>
+          </div>
+        </div>
+        <div class="rp-export-body" id="rpBodyJson">
+          <textarea class="rp-export-textarea json-color" id="rpJsonOutput" readonly rows="12"></textarea>
+          <div class="rp-export-actions">
+            <button class="btn btn-primary"   onclick="rpCopyTab('json')">📋 Copiar JSON</button>
+            <button class="btn btn-secondary" onclick="rpDownloadJson()">💾 Baixar .json</button>
+          </div>
+        </div>
+        <div class="rp-export-body" id="rpBodyImport">
+          <textarea class="rp-import-textarea" id="rpImportInput" placeholder="Cole um link do Google Maps ou JSON exportado pelo RotaMax…"></textarea>
+          <p class="rp-import-hint">💡 Aceita link do Google Maps ou JSON do RotaMax</p>
+          <div class="rp-export-actions">
+            <button class="btn btn-success" onclick="rpImportData()">✅ Carregar Rota</button>
+            <button class="btn btn-danger"  onclick="document.getElementById('rpImportInput').value=''">✕ Limpar</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /rpMain -->
+  </div><!-- /app -->
+
+  <div id="toast" class="toast"></div>
+
+  <style>
+    /* Estilos mínimos que não cabem no styles.css genérico */
+    .rp-header { background: linear-gradient(135deg,#0891b2 0%,#0e7490 100%); }
+    [data-theme='dark'] .rp-header { background: linear-gradient(135deg,#0e7490 0%,#155e75 100%); }
+    .rp-header .brand span { color: #a5f3fc; }
+    .rp-section-label {
+      font-size: var(--font-size-xs);
+      font-weight: 800;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-bottom: var(--spacing-sm);
+    }
+    .rp-header-back {
+      background: rgba(255,255,255,.15) !important;
+      color: #fff !important;
+      border-color: rgba(255,255,255,.25) !important;
+      text-decoration: none;
+    }
+    .rp-header-back:hover { background: rgba(255,255,255,.28) !important; }
+    /* Spinner */
+    @keyframes rp-spin { to { transform: rotate(360deg); } }
+    .rp-spinning { animation: rp-spin .85s linear infinite; display: inline-block; }
+  </style>
+
+  <script>
+  // ══════════════════════════════════════════════════════════════════
+  //  ESTADO
+  // ══════════════════════════════════════════════════════════════════
+  function rpNewStop(id) {
+    return { id, mode:'cep', cep:'', logradouro:'', bairro:'', localidade:'', uf:'', numero:'', manualAddr:'', resolvedAddr:'' };
+  }
+
+  let rpStops     = [rpNewStop(1), rpNewStop(2)];
+  let rpNextId    = 3;
+  let rpMode      = 'driving';
+  let rpModeLabel = 'Carro';
+  let rpOpts      = { toll:false, highway:false, ferry:false };
+  let rpActiveTab = 'url';
+  let rpDebounce  = {};
+
+  // ══════════════════════════════════════════════════════════════════
+  //  HELPERS
+  // ══════════════════════════════════════════════════════════════════
+  const rpFmtCep = v => { v=v.replace(/\D/g,'').slice(0,8); return v.length>5?v.slice(0,5)+'-'+v.slice(5):v; };
+  const rpRawCep = v => v.replace(/\D/g,'');
+  const rpEsc    = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const rpEscA   = s => String(s||'').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+
+  function rpStopAddress(s) {
+    if (s.logradouro) {
+      const p = [s.logradouro+(s.numero?', '+s.numero:'')];
+      if (s.bairro)     p.push(s.bairro);
+      if (s.localidade) p.push(s.localidade+(s.uf?' - '+s.uf:''));
+      if (s.cep)        p.push(s.cep.replace(/(\d{5})(\d{3})/,'$1-$2'));
+      return p.join(', ');
+    }
+    if (s.manualAddr.trim()) return s.resolvedAddr ? s.resolvedAddr.split('|')[0] : s.manualAddr;
+    return '';
+  }
+
+  // ══════════════════════════════════════════════════════════════════
+  //  TRANSPORTE / OPÇÕES
+  // ══════════════════════════════════════════════════════════════════
+  function rpSelectMode(btn) {
+    document.querySelectorAll('.rp-transport-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    rpMode      = btn.dataset.mode;
+    rpModeLabel = btn.querySelector('.icon').nextSibling?.textContent?.trim()||btn.textContent.trim();
+    rpUpdatePreview();
+  }
+
+  function rpToggleOpt(k) {
+    rpOpts[k] = !rpOpts[k];
+    const ids = { toll:'rpOptToll', highway:'rpOptHighway', ferry:'rpOptFerry' };
+    document.getElementById(ids[k]).classList.toggle('on', rpOpts[k]);
+    rpUpdatePreview();
+  }
+
+  // ══════════════════════════════════════════════════════════════════
+  //  RENDER
+  // ══════════════════════════════════════════════════════════════════
+  function rpRender() {
+    const list = document.getElementById('rpStopsList');
+    list.innerHTML = '';
+
+    rpStops.forEach((s, i) => {
+      const isFirst = i===0, isLast = i===rpStops.length-1;
+      const mkCls   = isFirst?'origin':isLast?'dest':'mid';
+      const mkLabel = isFirst?'📍':isLast?'🏁':(i+1);
+      const role    = isFirst?'PARTIDA':isLast?'DESTINO':'PARADA '+(i+1);
+      const cardCls = isFirst?'rp-origin':isLast?'rp-dest':'rp-mid';
+      const isCep   = s.mode==='cep', isMan = s.mode==='manual';
+
+      // CEP display
+      const hasCep = !!s.logradouro;
+      const cepFmt = s.cep ? s.cep.replace(/(\d{5})(\d{1,3})/,'$1-$2') : '';
+      let cepDisp;
+      if (hasCep) {
+        const st = `${s.logradouro}${s.bairro?', '+s.bairro:''} — ${s.localidade}/${s.uf}`;
+        cepDisp = `<div class="rp-street-display found" id="rpSd-${s.id}">
+          <span class="rp-street-text">${rpEsc(st)}</span>
+          <span class="rp-cep-badge">CEP ${cepFmt}</span>
+        </div>
+        <div class="rp-card-actions">
+          <button class="rp-btn-clear" onclick="rpClearCep(${s.id})">✕ Limpar</button>
+        </div>`;
+      } else {
+        cepDisp = `<div class="rp-street-display empty" id="rpSd-${s.id}">
+          <span>Digite o CEP → busca automática ao completar 8 dígitos</span>
+        </div>`;
+      }
+
+      // Manual display
+      const hasRes = !!s.resolvedAddr;
+      let manDisp;
+      if (hasRes) {
+        const [st, badge] = s.resolvedAddr.split('|');
+        manDisp = `<div class="rp-street-display found" id="rpMd-${s.id}">
+          <span class="rp-street-text">${rpEsc(st)}</span>
+          ${badge?`<span class="rp-cep-badge blue">${rpEsc(badge)}</span>`:''}
+        </div>
+        <div class="rp-card-actions">
+          <button class="rp-btn-clear" onclick="rpClearManual(${s.id})">✕ Limpar</button>
+        </div>`;
+      } else if (s.manualAddr.trim()) {
+        manDisp = `<div class="rp-street-display searching" id="rpMd-${s.id}">
+          <span>🔍 Buscando: ${rpEsc(s.manualAddr.slice(0,40))}…</span>
+        </div>
+        <div class="rp-card-actions">
+          <button class="rp-btn-clear"  onclick="rpClearManual(${s.id})">✕ Limpar</button>
+          <button class="rp-btn-lookup" onclick="rpForceManual(${s.id})">🔍 Buscar CEP</button>
+        </div>`;
+      } else {
+        manDisp = `<div class="rp-street-display empty" id="rpMd-${s.id}">
+          <span>Ex: Av. Paulista, 1000, São Paulo, SP</span>
+        </div>`;
+      }
+
+      const card = document.createElement('div');
+      card.className = `rp-stop-card ${cardCls}`;
+      card.id = `rpCard-${s.id}`;
+      card.innerHTML = `
+        <div class="rp-card-header">
+          <div class="rp-marker ${mkCls}">${mkLabel}</div>
+          <span class="rp-card-role">${role}</span>
+          ${rpStops.length>2?`<button class="btn-icon" onclick="rpRemoveStop(${s.id})" title="Remover parada">✕</button>`:''}
+        </div>
+
+        <div class="rp-mode-toggle">
+          <button class="rp-mode-btn ${isCep?'active':''}" onclick="rpSetMode(${s.id},'cep')">📮 CEP</button>
+          <button class="rp-mode-btn ${isMan?'active':''}" onclick="rpSetMode(${s.id},'manual')">✏️ Endereço</button>
+        </div>
+
+        <!-- Modo CEP -->
+        <div class="rp-input-mode ${isCep?'visible':''}" id="rpCepMode-${s.id}">
+          <div class="rp-addr-row">
+            <div class="rp-cep-wrap">
+              <input id="rpCep-${s.id}" class="rp-cep-input" type="text" inputmode="numeric"
+                maxlength="9" placeholder="00000-000" value="${rpEscA(cepFmt)}"
+                oninput="rpOnCepInput(${s.id},this)"
+                onkeydown="if(event.key==='Enter')rpLookupCep(${s.id})"/>
+              <button class="rp-cep-btn" onclick="rpLookupCep(${s.id})" title="Buscar CEP">🔍</button>
+            </div>
+            <div class="rp-num-wrap">
+              <span class="rp-num-label">Nº</span>
+              <input id="rpNum-${s.id}" class="rp-num-input" type="text" inputmode="numeric"
+                placeholder="123" value="${rpEscA(s.numero)}"
+                oninput="rpStops.find(x=>x.id===${s.id}).numero=this.value;rpUpdatePreview()"/>
+            </div>
+            ${isFirst?`<button class="rp-gps-btn" onclick="rpGetGPS(${s.id})" title="Usar GPS">📡</button>`:''}
+          </div>
+          ${cepDisp}
+        </div>
+
+        <!-- Modo Manual -->
+        <div class="rp-input-mode ${isMan?'visible':''}" id="rpManMode-${s.id}">
+          <div class="rp-addr-row">
+            <div class="rp-manual-wrap">
+              <input id="rpMan-${s.id}" class="rp-manual-input" type="text"
+                placeholder="Ex: Av. Paulista, 1000, São Paulo, SP"
+                value="${rpEscA(s.manualAddr)}"
+                oninput="rpOnManualInput(${s.id},this)"
+                onkeydown="if(event.key==='Enter')rpForceManual(${s.id})"/>
+            </div>
+            ${isFirst?`<button class="rp-gps-btn" onclick="rpGetGPS(${s.id})" title="Usar GPS">📡</button>`:''}
+          </div>
+          ${manDisp}
+        </div>
+      `;
+      list.appendChild(card);
+
+      if (i < rpStops.length-1) {
+        const c = document.createElement('div');
+        c.className = 'rp-connector';
+        c.innerHTML = '<div class="rp-connector-line"></div>';
+        list.appendChild(c);
+      }
+    });
+
+    document.getElementById('rpStopCount').textContent = `${rpStops.length} / 50`;
+    document.getElementById('rpBtnAdd').disabled = rpStops.length >= 50;
+  }
+
+  // ══════════════════════════════════════════════════════════════════
+  //  MODO CEP / MANUAL
+  // ══════════════════════════════════════════════════════════════════
+  function rpSetMode(id, mode) {
+    const s = rpStops.find(x=>x.id===id);
+    if (!s||s.mode===mode) return;
+    s.mode = mode;
+    rpRender(); rpUpdatePreview();
+    setTimeout(()=>document.getElementById(mode==='cep'?`rpCep-${id}`:`rpMan-${id}`)?.focus(), 40);
+  }
+
+  function rpOnCepInput(id, el) {
+    el.value = rpFmtCep(el.value);
+    const s = rpStops.find(x=>x.id===id);
+    if (!s) return;
+    const raw = rpRawCep(el.value);
+    if (raw !== s.cep) { s.cep=raw; s.logradouro=''; s.bairro=''; s.localidade=''; s.uf=''; rpUpdatePreview(); }
+    if (raw.length===8) rpLookupCep(id);
+  }
+
+  async function rpLookupCep(id) {
+    const s = rpStops.find(x=>x.id===id);
+    if (!s) return;
+    const raw = rpRawCep(s.cep);
+    if (raw.length!==8) { rpToast('❌ CEP deve ter 8 dígitos'); return; }
+    rpSetSd(id,'searching','🔍 Buscando…');
+    const btn = document.querySelector(`#rpCepMode-${id} .rp-cep-btn`);
+    if (btn) btn.innerHTML='<span class="rp-spinning">⏳</span>';
+    try {
+      const r = await fetch(`https://viacep.com.br/ws/${raw}/json/`);
+      const d = await r.json();
+      if (d.erro) throw new Error('CEP não encontrado');
+      s.logradouro=d.logradouro||''; s.bairro=d.bairro||''; s.localidade=d.localidade||''; s.uf=d.uf||'';
+      rpRender(); rpUpdatePreview();
+      setTimeout(()=>document.getElementById(`rpNum-${id}`)?.focus(), 55);
+      rpToast(`✅ ${d.logradouro||'Endereço'} encontrado!`);
+    } catch(e) {
+      s.logradouro=''; s.bairro=''; s.localidade=''; s.uf='';
+      rpSetSd(id,'error',e.message||'CEP não encontrado');
+      rpToast('❌ '+(e.message||'CEP não encontrado'));
+    } finally {
+      const b=document.querySelector(`#rpCepMode-${id} .rp-cep-btn`);
+      if (b) b.innerHTML='🔍';
+    }
+  }
+
+  function rpClearCep(id) {
+    const s=rpStops.find(x=>x.id===id);
+    if (!s) return;
+    Object.assign(s,{cep:'',logradouro:'',bairro:'',localidade:'',uf:'',numero:''});
+    rpRender(); rpUpdatePreview();
+    setTimeout(()=>document.getElementById(`rpCep-${id}`)?.focus(),40);
+  }
+
+  function rpSetSd(id,cls,text) {
+    const el=document.getElementById(`rpSd-${id}`);
+    if (!el) return;
+    el.className=`rp-street-display ${cls}`;
+    el.innerHTML=`<span>${rpEsc(text)}</span>`;
+  }
+
+  // ── Manual ────────────────────────────────────────────────────────
+  function rpOnManualInput(id, el) {
+    const s=rpStops.find(x=>x.id===id);
+    if (!s) return;
+    s.manualAddr=el.value; s.resolvedAddr=''; s.logradouro=''; s.bairro=''; s.localidade=''; s.uf=''; s.cep='';
+    rpUpdatePreview();
+    clearTimeout(rpDebounce[id]);
+    if (el.value.trim().length>7) {
+      rpSetMd(id,'searching','🔍 Aguardando…');
+      rpDebounce[id]=setTimeout(()=>rpManualLookup(id),1400);
+    } else {
+      rpSetMd(id,'empty','Ex: Av. Paulista, 1000, São Paulo, SP');
+    }
+  }
+
+  async function rpManualLookup(id) {
+    const s=rpStops.find(x=>x.id===id);
+    if (!s||!s.manualAddr.trim()) return;
+    rpSetMd(id,'searching',`🔍 Buscando: ${s.manualAddr.slice(0,36)}…`);
+    try {
+      const q=encodeURIComponent(s.manualAddr+', Brasil');
+      const r=await fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&addressdetails=1&limit=1&countrycodes=br`);
+      const data=await r.json();
+      if (!data?.length) throw new Error('Endereço não encontrado');
+      const place=data[0], a=place.address||{};
+      const cepRaw=(a.postcode||'').replace(/\D/g,'');
+      const road=a.road||a.pedestrian||a.footway||'';
+      const city=a.city||a.town||a.village||'';
+      const st=a.state_code||(a.state||'').slice(0,2).toUpperCase()||'';
+      let displayStr=place.display_name.split(',').slice(0,4).join(',').trim();
+      let badgeStr='';
+      if (cepRaw.length===8) {
+        try {
+          const vc=await fetch(`https://viacep.com.br/ws/${cepRaw}/json/`);
+          const vd=await vc.json();
+          if (!vd.erro) {
+            s.logradouro=vd.logradouro||road; s.bairro=vd.bairro||'';
+            s.localidade=vd.localidade||city; s.uf=vd.uf||st; s.cep=cepRaw;
+            displayStr=`${s.logradouro}${s.bairro?', '+s.bairro:''} — ${s.localidade}/${s.uf}`;
+            badgeStr=`CEP ${cepRaw.slice(0,5)}-${cepRaw.slice(5)}`;
+          }
+        } catch(_) {}
+      }
+      s.resolvedAddr=`${displayStr}|${badgeStr}`;
+      rpSetMd(id,'found',displayStr,badgeStr);
+      rpUpdatePreview();
+      rpToast('📍 Endereço localizado!');
+    } catch(e) {
+      s.resolvedAddr='';
+      rpSetMd(id,'error',e.message||'Endereço não encontrado');
+      rpUpdatePreview();
+    }
+  }
+
+  function rpForceManual(id) { clearTimeout(rpDebounce[id]); rpManualLookup(id); }
+
+  function rpClearManual(id) {
+    const s=rpStops.find(x=>x.id===id);
+    if (!s) return;
+    Object.assign(s,{manualAddr:'',resolvedAddr:'',logradouro:'',bairro:'',localidade:'',uf:'',cep:''});
+    rpRender(); rpUpdatePreview();
+    setTimeout(()=>document.getElementById(`rpMan-${id}`)?.focus(),40);
+  }
+
+  function rpSetMd(id,cls,text,badge='') {
+    const el=document.getElementById(`rpMd-${id}`);
+    if (!el) return;
+    el.className=`rp-street-display ${cls}`;
+    if (cls==='found') {
+      el.innerHTML=`<span class="rp-street-text">${rpEsc(text)}</span>${badge?`<span class="rp-cep-badge blue">${rpEsc(badge)}</span>`:''}`;
+    } else {
+      el.innerHTML=`<span>${rpEsc(text)}</span>`;
+    }
+  }
+
+  // ── GPS ───────────────────────────────────────────────────────────
+  function rpGetGPS(id) {
+    if (!navigator.geolocation) { rpToast('❌ GPS não disponível'); return; }
+    const btn=document.querySelector(`#rpCard-${id} .rp-gps-btn`);
+    if (btn) { btn.innerHTML='<span class="rp-spinning">⏳</span>'; btn.disabled=true; }
+    navigator.geolocation.getCurrentPosition(async pos=>{
+      const {latitude:lat,longitude:lng}=pos.coords;
+      const s=rpStops.find(x=>x.id===id);
+      if (!s) return;
+      try {
+        const r=await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`);
+        const d=await r.json(); const a=d.address||{};
+        s.logradouro=a.road||a.pedestrian||a.footway||'';
+        s.bairro=a.suburb||a.neighbourhood||'';
+        s.localidade=a.city||a.town||a.village||'';
+        s.uf=a.state_code||(a.state||'').slice(0,2).toUpperCase()||'';
+        s.cep=(a.postcode||'').replace(/\D/g,'');
+        s.numero=a.house_number||'';
+        s.mode='cep';
+        rpRender(); rpUpdatePreview();
+        rpToast('📍 Localização obtida!');
+      } catch {
+        s.manualAddr=`${lat},${lng}`; s.mode='manual';
+        rpRender(); rpUpdatePreview();
+        rpToast('📡 Usando coordenadas GPS');
+      }
+    },err=>{
+      const b=document.querySelector(`#rpCard-${id} .rp-gps-btn`);
+      if (b){b.innerHTML='📡';b.disabled=false;}
+      const msgs={1:'Permissão negada',2:'GPS indisponível',3:'Tempo esgotado'};
+      rpToast('❌ '+(msgs[err.code]||'Erro GPS'));
+    },{enableHighAccuracy:true,timeout:10000});
+  }
+
+  // ══════════════════════════════════════════════════════════════════
+  //  CRUD DE PARADAS
+  // ══════════════════════════════════════════════════════════════════
+  function rpAddStop() {
+    if (rpStops.length>=50) return;
+    const ns=rpNewStop(rpNextId++);
+    rpStops.splice(rpStops.length-1,0,ns);
+    rpRender();
+    setTimeout(()=>document.getElementById(`rpCep-${ns.id}`)?.focus(),50);
+  }
+
+  function rpRemoveStop(id) {
+    if (rpStops.length<=2) return;
+    rpStops=rpStops.filter(s=>s.id!==id);
+    rpRender(); rpUpdatePreview();
+  }
+
+  function rpClearAll() {
+    rpStops=[rpNewStop(1),rpNewStop(2)]; rpNextId=3;
+    rpRender();
+    document.getElementById('rpExportPanel').style.display='none';
+    rpToast('🗑️ Rota limpa');
+  }
+
+  // ══════════════════════════════════════════════════════════════════
+  //  URL / JSON
+  // ══════════════════════════════════════════════════════════════════
+  function rpBuildUrl() {
+    const addrs=rpStops.map(rpStopAddress).filter(Boolean);
+    if (addrs.length<2) return null;
+    let url=`https://www.google.com/maps/dir/${addrs.map(a=>encodeURIComponent(a)).join('/')}`;
+    const p=new URLSearchParams();
+    p.set('travelmode',rpMode);
+    const av=[];
+    if(rpOpts.toll)    av.push('tolls');
+    if(rpOpts.highway) av.push('highways');
+    if(rpOpts.ferry)   av.push('ferries');
+    if(av.length) p.set('avoid',av.join('|'));
+    return url+'?'+p.toString();
+  }
+
+  function rpBuildJson() {
+    const filled=rpStops.filter(s=>rpStopAddress(s));
+    if (filled.length<2) return null;
+    const av=[];
+    if(rpOpts.toll)    av.push('tolls');
+    if(rpOpts.highway) av.push('highways');
+    if(rpOpts.ferry)   av.push('ferries');
+    return {
+      app:'RotaMax', version:'3.0', exportedAt:new Date().toISOString(),
+      route:{
+        transport:{mode:rpMode,label:rpModeLabel},
+        options:{avoid:av},
+        stops:filled.map((s,i)=>({
+          index:i, role:i===0?'origin':i===filled.length-1?'destination':'waypoint',
+          cep:s.cep||'', logradouro:s.logradouro||'', bairro:s.bairro||'',
+          localidade:s.localidade||'', uf:s.uf||'', numero:s.numero||'',
+          manualAddr:s.manualAddr||'', address:rpStopAddress(s)
+        })),
+        totalStops:filled.length, mapsUrl:rpBuildUrl()
+      }
+    };
+  }
+
+  // ══════════════════════════════════════════════════════════════════
+  //  EXPORT / IMPORT
+  // ══════════════════════════════════════════════════════════════════
+  function rpUpdatePreview() {
+    const url=rpBuildUrl();
+    document.getElementById('rpExportPanel').style.display=url?'block':'none';
+    if (url) rpRefreshOutputs();
+  }
+
+  function rpRefreshOutputs() {
+    document.getElementById('rpUrlOutput').value  = rpBuildUrl()||'';
+    document.getElementById('rpJsonOutput').value = JSON.stringify(rpBuildJson(),null,2)||'';
+  }
+
+  function rpSwitchTab(tab) {
+    rpActiveTab=tab;
+    ['url','json','import'].forEach(t=>{
+      const T=t[0].toUpperCase()+t.slice(1);
+      document.getElementById('rpTab'+T).className='rp-export-tab';
+      document.getElementById('rpBody'+T).classList.remove('visible');
+    });
+    const T=tab[0].toUpperCase()+tab.slice(1);
+    document.getElementById('rpTab'+T).classList.add('act-'+tab);
+    document.getElementById('rpBody'+T).classList.add('visible');
+    if (tab!=='import') rpRefreshOutputs();
+  }
+
+  function rpCopyTab(t) {
+    const txt=document.getElementById(t==='url'?'rpUrlOutput':'rpJsonOutput').value;
+    if (!txt){rpToast('⚠️ Nada para copiar');return;}
+    navigator.clipboard?.writeText(txt)
+      .then(()=>rpToast(t==='url'?'📋 Link copiado!':'📋 JSON copiado!'))
+      .catch(()=>rpToast('❌ Erro ao copiar'));
+  }
+
+  function rpOpenRoute() {
+    const u=rpBuildUrl();
+    if (!u){rpToast('⚠️ Preencha pelo menos dois pontos');return;}
+    window.open(u,'_blank');
+    rpToast('🗺️ Abrindo Google Maps!');
+  }
+
+  function rpShareRoute() {
+    const u=rpBuildUrl();
+    if (!u){rpToast('⚠️ Preencha a rota');return;}
+    if (navigator.share) navigator.share({title:'Rota RotaMax',url:u}).catch(()=>{});
+    else { rpCopyTab('url'); rpToast('📤 Link copiado!'); }
+  }
+
+  function rpDownloadJson() {
+    const j=rpBuildJson();
+    if (!j){rpToast('⚠️ Preencha a rota');return;}
+    const b=new Blob([JSON.stringify(j,null,2)],{type:'application/json'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(b);
+    a.download=`rota_${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+    rpToast('💾 JSON baixado!');
+  }
+
+  function rpImportData() {
+    const raw=document.getElementById('rpImportInput').value.trim();
+    if (!raw){rpToast('⚠️ Cole algo primeiro');return;}
+    if (raw.startsWith('{')) {
+      try {
+        const d=JSON.parse(raw); const route=d.route||d;
+        if (!route.stops?.length||route.stops.length<2) throw new Error('JSON inválido');
+        rpStops=route.stops.map(s=>({
+          ...rpNewStop(rpNextId++), mode:s.logradouro?'cep':'manual',
+          cep:s.cep||'', logradouro:s.logradouro||'', bairro:s.bairro||'',
+          localidade:s.localidade||'', uf:s.uf||'', numero:s.numero||'',
+          manualAddr:s.manualAddr||s.address||'', resolvedAddr:''
+        }));
+        if(route.transport?.mode) rpMode=route.transport.mode;
+        rpOpts={toll:false,highway:false,ferry:false};
+        (route.options?.avoid||[]).forEach(v=>{
+          if(v==='tolls')    {rpOpts.toll=true;   document.getElementById('rpOptToll').classList.add('on');}
+          if(v==='highways') {rpOpts.highway=true; document.getElementById('rpOptHighway').classList.add('on');}
+          if(v==='ferries')  {rpOpts.ferry=true;   document.getElementById('rpOptFerry').classList.add('on');}
+        });
+        rpRender(); rpUpdatePreview(); rpSwitchTab('url');
+        rpToast(`✅ ${rpStops.length} paradas importadas!`);
+      } catch(e){rpToast('❌ '+(e.message||'JSON inválido'));}
+      return;
+    }
+    if (raw.includes('google.com/maps')) {
+      try {
+        const url=new URL(raw);
+        const m=url.pathname.match(/\/maps\/dir\/(.*)/);
+        if (!m) throw new Error('URL não suportada');
+        const parts=m[1].split('/').map(p=>decodeURIComponent(p)).filter(Boolean);
+        if (parts.length<2) throw new Error('Poucos pontos na URL');
+        rpStops=parts.map(p=>({...rpNewStop(rpNextId++),mode:'manual',manualAddr:p}));
+        const mode=url.searchParams.get('travelmode'); if(mode) rpMode=mode;
+        const av=url.searchParams.get('avoid')||'';
+        rpOpts={toll:av.includes('tolls'),highway:av.includes('highways'),ferry:av.includes('ferries')};
+        ['rpOptToll','rpOptHighway','rpOptFerry'].forEach(id=>document.getElementById(id).classList.remove('on'));
+        if(rpOpts.toll)    document.getElementById('rpOptToll').classList.add('on');
+        if(rpOpts.highway) document.getElementById('rpOptHighway').classList.add('on');
+        if(rpOpts.ferry)   document.getElementById('rpOptFerry').classList.add('on');
+        rpRender(); rpUpdatePreview(); rpSwitchTab('url');
+        rpToast(`✅ ${rpStops.length} paradas importadas!`);
+      } catch(e){rpToast('❌ '+(e.message||'Link inválido'));}
+      return;
+    }
+    rpToast('❌ Formato não reconhecido');
+  }
+
+  // ══════════════════════════════════════════════════════════════════
+  //  TOAST — usa o mesmo #toast e .toast do styles.css
+  // ══════════════════════════════════════════════════════════════════
+  let rpToastTimer;
+  function rpToast(msg) {
+    const el=document.getElementById('toast');
+    if (!el) return;
+    el.textContent=msg;
+    el.classList.add('show');
+    clearTimeout(rpToastTimer);
+    rpToastTimer=setTimeout(()=>el.classList.remove('show'),2800);
+  }
+
+  // ══════════════════════════════════════════════════════════════════
+  //  TEMA — sincronizado com o Sistema de Territórios (mesma key)
+  // ══════════════════════════════════════════════════════════════════
+  function rpApplyTheme(theme) {
+    const btn=document.getElementById('rpThemeBtn');
+    if (theme==='dark') {
+      document.documentElement.setAttribute('data-theme','dark');
+      if (btn) btn.innerHTML='☀️ <span class="btn-label">Tema</span>';
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+      if (btn) btn.innerHTML='🌙 <span class="btn-label">Tema</span>';
+    }
+    localStorage.setItem('theme',theme);
+  }
+
+  // ══════════════════════════════════════════════════════════════════
+  //  PRÉ-CARREGAMENTO DO SISTEMA DE TERRITÓRIOS
+  // ══════════════════════════════════════════════════════════════════
+  function rpLoadFromTerritory() {
+    try {
+      const raw=localStorage.getItem('rotamax_preload');
+      if (!raw) return;
+      localStorage.removeItem('rotamax_preload'); // consome uma única vez
+      const data=JSON.parse(raw);
+      if (!data.addresses?.length) return;
+
+      rpStops=[];
+      data.addresses.forEach(addr=>{
+        const s=rpNewStop(rpNextId++);
+        if (addr.logradouro) {
+          s.mode='cep';
+          s.cep=addr.cep||'';
+          s.logradouro=addr.logradouro||'';
+          s.bairro    =addr.bairro    ||'';
+          s.localidade=addr.localidade||'';
+          s.uf        =addr.uf        ||'';
+          s.numero    =addr.numero    ||'';
+        } else {
+          s.mode='manual';
+          s.manualAddr=addr.display||'';
+        }
+        rpStops.push(s);
+      });
+
+      while (rpStops.length<2) rpStops.push(rpNewStop(rpNextId++));
+
+      const notice=document.getElementById('rpPreloadNotice');
+      const nameEl=document.getElementById('rpPreloadName');
+      if (notice&&nameEl) {
+        nameEl.textContent=data.territoryName||'';
+        notice.classList.add('show');
+      }
+    } catch(e) {
+      console.error('Erro ao carregar dados do território:',e);
+    }
+  }
+
+  // ══════════════════════════════════════════════════════════════════
+  //  INICIALIZAÇÃO
+  // ══════════════════════════════════════════════════════════════════
+  (function init() {
+    // Tema salvo (mesmo localStorage do sistema de territórios)
+    const savedTheme=localStorage.getItem('theme');
+    if (savedTheme) rpApplyTheme(savedTheme);
+
+    document.getElementById('rpThemeBtn')?.addEventListener('click',()=>{
+      const curr=document.documentElement.getAttribute('data-theme');
+      rpApplyTheme(curr==='dark'?'light':'dark');
+    });
+
+    // Pré-carrega endereços do território se viemos de lá
+    rpLoadFromTerritory();
+
+    // Renderiza
+    rpRender();
+    rpUpdatePreview();
+  })();
+  </script>
+</body>
+</html>
